@@ -10,6 +10,8 @@ namespace Knoten
     {
         static void Main(string[] args)
         {
+            Knoten k = new Knoten();
+            k.readNodes("test.txt");
         }
     }
 }
