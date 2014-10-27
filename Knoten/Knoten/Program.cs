@@ -10,8 +10,14 @@ namespace Knoten
     {
         static void Main(string[] args)
         {
-            Knoten k = new Knoten();
-            k.readNodes("test.txt");
+           // if (args.Length != 0) {
+            Knoten k = new Knoten(1);//Convert.ToInt32(args[0]));
+               k.readNodes("test.txt");
+               k.nodeInit();
+               Console.WriteLine("Node Info:" + k.id + " " + k.ip+ ":" + k.port);
+               Console.WriteLine("Nachbaranzahl: " + k.neighBors.Count);
+               k.Listen();
+          //  }
         }
     }
 }
