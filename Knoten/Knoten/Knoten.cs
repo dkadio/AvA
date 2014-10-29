@@ -187,11 +187,9 @@ namespace Knoten
                new System.IO.StreamReader("../../"+filePath);
             while ((line = file.ReadLine()) != null)
             {
-                String[] words = line.Split(' ');
-                String[] ipPort = words[1].Split(':');
-
-                String ip = ipPort[0];
-                int port = Convert.ToInt32(ipPort[1]);
+                String[] words = line.Split(new char[] { ' ', ':' });
+                String ip = words[1];
+                int port = Convert.ToInt32(words[2]);
                 int id = Convert.ToInt32(words[0]);
                 allNodes.Add(new Knoten(id, ip, port));
                 counter++;
