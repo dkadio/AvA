@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Knoten
 {
-    
+
     class Knoten
     {
         public int id { get; set; }
@@ -17,6 +17,7 @@ namespace Knoten
         public List<Knoten> allNodes { get; set; }   //are all information about the other nodes
         public List<Knoten> neighBors { get; set; }
         public Boolean end;
+        public Boolean initator;
 
         public Knoten(int id, String ip, int port) 
         {
@@ -88,11 +89,12 @@ namespace Knoten
                         // read the received Data and check if is a controll or a normal msg
                         readMessage(data);
 
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+                     //  byte[] msg = System.Text.Encoding.ASCII.GetBytes("ctrl#danke");
 
                         // Send back a response.
-                        stream.Write(msg, 0, msg.Length);
-                        Console.WriteLine("Sent: {0}", data);
+                    //    stream.Write(msg, 0, msg.Length);
+                     //   Console.WriteLine("Sent " + DateTime.Now + ":{0}", data);
+                      
                     }
 
                     // Shutdown and end connection
@@ -113,26 +115,59 @@ namespace Knoten
 
         public void readMessage(String msg)
         {
-            if(msg.Contains("ctrl:")){
-                Console.WriteLine("ctrl emfpangen");
-                if (msg.Contains("ctrl:end"))
-                {
-                    end = false;
-                }
-                if (msg.Contains("ctrl:endall"))
-                {
-                    end = false;
-                    foreach (var node in allNodes)
-                    {
-                        sendMessage(msg);
-                    }
-                }
-            }        
+            if (msg.Contains("ctrl#") || msg.Contains("msg#")) { 
+            String msgtyp = msg.Split('#')[0];
+            msg = msg.Split('#')[1];
+            switch(msgtyp){
+                case "ctrl":
+                    ctrlMsg(msg);
+                    break;
+                case "msg":
+                    normaMsg(msg);
+                    break;
+            }
+            }
         }
 
-        private void sendMessage(String msg)
+        /**
+         * Analyse a normal Msg
+         */
+        private void normaMsg(string msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        /**
+         * Analyse a Controllmsg
+         */
+        private void ctrlMsg(string msg)
+        {
+            switch (msg)
+            {
+                case "end":
+                    end = false;
+                    break;
+                case "endall":
+                  //  end = false;
+                    foreach (var node in allNodes)
+                    {
+                        if (node.id != id) { 
+                           Console.WriteLine("Send msg to id: " + node.id);
+                           sendMessage("ctrl#"+msg, node);
+                        }
+                    }
+                    break;
+                case "init":
+                    initator = true;
+                    break;
+            }
+        }
+
+
+        private void sendMessage(String msg, Knoten node)
         {
             //send a msg to a tcp listener
+            TcpClient client = new TcpClient();
         }
 
         /**
