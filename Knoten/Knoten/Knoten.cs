@@ -252,11 +252,71 @@ namespace Knoten
                         this.ip = info.ip;
                         this.port = info.port;
                     }
-                    else if(neighBors.Count < 3)
+                   // else if(neighBors.Count < 3) //TODO: das braucht man nicht mehr wenn der alles aus der graphviz datei ausliest
+                   // {
+                   //     neighBors.Add(info);
+                   // }
+                }
+            }
+        }
+
+        /*
+         * reads a graphviz file and adds the right neighbours
+         * Format:
+         * graph G {
+            1 -- 2;
+            3 -- 2;
+            4 -- 2;
+            4 -- 3;
+            5 -- 1;
+            5 -- 3;
+            }
+         */
+        internal void readGraph(string path)
+        {
+            string line;
+            int counter = 0;
+            // Read the file and display it line by line.
+            System.IO.StreamReader file =
+               new System.IO.StreamReader("../../" + path);
+            while ((line = file.ReadLine()) != null)
+            {
+                if (line.EndsWith(";")) 
+                {
+                    line = line.Replace(" -- ", ";");
+                    String[] word = line.Split(';');
+                    int id1 = Convert.ToInt32(word[0]);
+                    int id2 = Convert.ToInt32(word[1]);
+                   
+                    if (id1 == this.id)
                     {
-                        neighBors.Add(info);
+                        addneigbor(id2);
+                    }
+                    else if (id2 == this.id)
+                    {
+                        addneigbor(id1);   
                     }
                 }
+                    
+                counter++;
+                //Console.WriteLine(ip);
+                // Console.WriteLine(port);
+                // Console.WriteLine(id);
+            }
+
+            file.Close();
+        }
+
+        private void addneigbor(int id1)
+        {
+            foreach (var node in allNodes)
+            {
+                if (id1 == node.id)
+                {
+                    Console.WriteLine("nachbar hinzugefuegt, id: " + id1);
+                    neighBors.Add(node);
+                }
+                    
             }
         }
     }

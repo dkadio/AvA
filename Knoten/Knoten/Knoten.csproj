@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="graph1.gv" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="test.txt" />

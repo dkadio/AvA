@@ -11,11 +11,14 @@ namespace Knoten
         static void Main(string[] args)
         {
            // if (args.Length != 0) {
-            Knoten k = new Knoten(1);//Convert.ToInt32(args[0]));
+               Knoten k = new Knoten(1);//Convert.ToInt32(args[0]));
                k.readNodes("test.txt");
                k.nodeInit();
+               k.readGraph("graph1.gv");
+               Console.WriteLine("********************************");
                Console.WriteLine("Node Info:" + k.id + " " + k.ip+ ":" + k.port);
                Console.WriteLine("Nachbaranzahl: " + k.neighBors.Count);
+               Console.WriteLine("********************************");
                k.Listen();
           //  }
         }
