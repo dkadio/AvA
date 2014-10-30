@@ -20,7 +20,7 @@ namespace Knoten
         public Boolean initator;
         public Boolean sendId;
 
-        public Knoten(int id, String ip, int port) 
+        public Knoten(int id, String ip, int port)
         {
             this.id = id;
             this.ip = ip;
@@ -31,7 +31,8 @@ namespace Knoten
             sendId = true;
         }
 
-        public Knoten(){
+        public Knoten()
+        {
             allNodes = new List<Knoten>();
             neighBors = new List<Knoten>();
             end = true;
@@ -57,7 +58,8 @@ namespace Knoten
             //Maybe use newer version
             TcpListener listener = new TcpListener(port);
 
-            try{
+            try
+            {
 
                 // Start listening for client requests.
                 listener.Start();
@@ -84,6 +86,7 @@ namespace Knoten
                     int i;
 
                     // Loop to receive all the data sent by the client.
+
                     while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
                         // Translate data bytes to a ASCII string.
@@ -92,19 +95,26 @@ namespace Knoten
                         Console.WriteLine("Received " + DateTime.Now + ": {0}", data);
 
                         // read the received Data and check if is a controll or a normal msg
-                        
 
-                     //  byte[] msg = System.Text.Encoding.ASCII.GetBytes("ctrl#danke");
+
+                        //  byte[] msg = System.Text.Encoding.ASCII.GetBytes("ctrl#danke");
 
                         // Send back a response.
-                    //    stream.Write(msg, 0, msg.Length);
-                     //   Console.WriteLine("Sent " + DateTime.Now + ":{0}", data);
+                        //    stream.Write(msg, 0, msg.Length);
+                        //   Console.WriteLine("Sent " + DateTime.Now + ":{0}", data);
 
-                    } readMessage(data);
+                    }
 
+
+                    readMessage(data);
                     // Shutdown and end connection
                     client.Close();
+
                 }
+            }
+            catch (System.IO.IOException)
+            {
+                Console.WriteLine("Client hat unerwartet beendet");
             }
             catch (SocketException e)
             {
@@ -123,17 +133,20 @@ namespace Knoten
          */
         public void readMessage(String msg)
         {
-            if (msg.Contains("ctrl#") || msg.Contains("msg#")) { 
-            String msgtyp = msg.Split('#')[0];
-            msg = msg.Split('#')[1];
-            switch(msgtyp){
-                case "ctrl":
-                    ctrlMsg(msg);
-                    break;
-                case "msg":
-                    normaMsg(msg);
-                    break;
-            }
+            Console.WriteLine("Werte Nachricht aus");
+            if (msg.Contains("ctrl#") || msg.Contains("msg#"))
+            {
+                String msgtyp = msg.Split('#')[0];
+                msg = msg.Split('#')[1];
+                switch (msgtyp)
+                {
+                    case "ctrl":
+                        ctrlMsg(msg);
+                        break;
+                    case "msg":
+                        normaMsg(msg);
+                        break;
+                }
             }
         }
 
@@ -142,8 +155,8 @@ namespace Knoten
          */
         private void normaMsg(string msg)
         {
-            foreach(var node in neighBors)
-            sendMessage(msg, node);
+            foreach (var node in neighBors)
+                sendMessage(msg, node);
         }
 
         /**
@@ -160,9 +173,10 @@ namespace Knoten
                     end = false;
                     foreach (var node in allNodes)
                     {
-                        if (node.id != id) { 
-                           Console.WriteLine("Send msg to id: " + node.id);
-                           sendMessage("ctrl#"+msg, node);
+                        if (node.id != id)
+                        {
+                            Console.WriteLine("Send msg to id: " + node.id);
+                            sendMessage("ctrl#" + msg, node);
                         }
                     }
                     break;
@@ -178,26 +192,28 @@ namespace Knoten
          */
         private void sendMessage(String msg, Knoten node)
         {
-            if (sendId) { 
+            if (sendId)
+            {
                 sendId = false;
-                foreach (var n in neighBors) 
+                foreach (var n in neighBors)
                     sendMessage(node.id.ToString(), n);
             }
-            try { 
-            //send a msg to a tcp listener
-            TcpClient client = new TcpClient(node.ip, node.port);
-            Byte[] data = System.Text.Encoding.ASCII.GetBytes(msg);
+            try
+            {
+                //send a msg to a tcp listener
+                TcpClient client = new TcpClient(node.ip, node.port);
+                Byte[] data = System.Text.Encoding.ASCII.GetBytes(msg);
 
-            NetworkStream stream = client.GetStream();
+                NetworkStream stream = client.GetStream();
 
-            // Send the message to the connected TcpServer. 
-            stream.Write(data, 0, data.Length);
+                // Send the message to the connected TcpServer. 
+                stream.Write(data, 0, data.Length);
 
-            Console.WriteLine("Sent " + DateTime.Now + ":{0}", msg);
-            stream.Close();
-            client.Close();
+                Console.WriteLine("Sent " + DateTime.Now + ":{0}", msg);
+                stream.Close();
+                client.Close();
             }
-            catch (SocketException e)
+            catch (SocketException)
             {
                 Console.WriteLine("Knoten " + node.id + " nicht vergeben oder nicht erreichbar");
             }
@@ -217,7 +233,7 @@ namespace Knoten
             int counter = 0;
             // Read the file and display it line by line.
             System.IO.StreamReader file =
-               new System.IO.StreamReader("../../"+filePath);
+               new System.IO.StreamReader("../../" + filePath);
             while ((line = file.ReadLine()) != null)
             {
                 String[] words = line.Split(new char[] { ' ', ':' });
@@ -226,9 +242,9 @@ namespace Knoten
                 int id = Convert.ToInt32(words[0]);
                 allNodes.Add(new Knoten(id, ip, port));
                 counter++;
-               //Console.WriteLine(ip);
-               // Console.WriteLine(port);
-               // Console.WriteLine(id);
+                //Console.WriteLine(ip);
+                // Console.WriteLine(port);
+                // Console.WriteLine(id);
             }
 
             file.Close();
@@ -252,10 +268,10 @@ namespace Knoten
                         this.ip = info.ip;
                         this.port = info.port;
                     }
-                   // else if(neighBors.Count < 3) //TODO: das braucht man nicht mehr wenn der alles aus der graphviz datei ausliest
-                   // {
-                   //     neighBors.Add(info);
-                   // }
+                    // else if(neighBors.Count < 3) //TODO: das braucht man nicht mehr wenn der alles aus der graphviz datei ausliest
+                    // {
+                    //     neighBors.Add(info);
+                    // }
                 }
             }
         }
@@ -281,23 +297,23 @@ namespace Knoten
                new System.IO.StreamReader("../../" + path);
             while ((line = file.ReadLine()) != null)
             {
-                if (line.EndsWith(";")) 
+                if (line.EndsWith(";"))
                 {
                     line = line.Replace(" -- ", ";");
                     String[] word = line.Split(';');
                     int id1 = Convert.ToInt32(word[0]);
                     int id2 = Convert.ToInt32(word[1]);
-                   
+
                     if (id1 == this.id)
                     {
                         addneigbor(id2);
                     }
                     else if (id2 == this.id)
                     {
-                        addneigbor(id1);   
+                        addneigbor(id1);
                     }
                 }
-                    
+
                 counter++;
                 //Console.WriteLine(ip);
                 // Console.WriteLine(port);
@@ -316,7 +332,7 @@ namespace Knoten
                     Console.WriteLine("nachbar hinzugefuegt, id: " + id1);
                     neighBors.Add(node);
                 }
-                    
+
             }
         }
     }
