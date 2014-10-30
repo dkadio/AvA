@@ -18,6 +18,7 @@ namespace Knoten
         public List<Knoten> neighBors { get; set; }
         public Boolean end;
         public Boolean initator;
+        public Boolean sendId;
 
         public Knoten(int id, String ip, int port) 
         {
@@ -27,12 +28,14 @@ namespace Knoten
             allNodes = new List<Knoten>();
             neighBors = new List<Knoten>();
             end = true;
+            sendId = true;
         }
 
         public Knoten(){
             allNodes = new List<Knoten>();
             neighBors = new List<Knoten>();
             end = true;
+            sendId = true;
         }
 
         public Knoten(int id)
@@ -41,12 +44,13 @@ namespace Knoten
             neighBors = new List<Knoten>();
             this.id = id;
             end = true;
+            sendId = true;
         }
 
         /**
-         * Listen on inc msg, Format 
-         *                      "ctrl:controllmsg;msg:message" 
-         *                      "sysmsg:normale message"
+         * Listen to inc msg, Format 
+         *                      "ctrl#controllmsg" 
+         *                      "msg#normale message"
          */
         public void Listen()
         {
@@ -84,18 +88,19 @@ namespace Knoten
                     {
                         // Translate data bytes to a ASCII string.
                         data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                        Console.WriteLine("*********new MSG*******");
                         Console.WriteLine("Received " + DateTime.Now + ": {0}", data);
 
                         // read the received Data and check if is a controll or a normal msg
-                        readMessage(data);
+                        
 
                      //  byte[] msg = System.Text.Encoding.ASCII.GetBytes("ctrl#danke");
 
                         // Send back a response.
                     //    stream.Write(msg, 0, msg.Length);
                      //   Console.WriteLine("Sent " + DateTime.Now + ":{0}", data);
-                      
-                    }
+
+                    } readMessage(data);
 
                     // Shutdown and end connection
                     client.Close();
@@ -113,6 +118,9 @@ namespace Knoten
 
         }
 
+        /**
+         * reads a msg and decide if its a ctrl oder a normal msg
+         */
         public void readMessage(String msg)
         {
             if (msg.Contains("ctrl#") || msg.Contains("msg#")) { 
@@ -134,7 +142,8 @@ namespace Knoten
          */
         private void normaMsg(string msg)
         {
-            throw new NotImplementedException();
+            foreach(var node in neighBors)
+            sendMessage(msg, node);
         }
 
         /**
@@ -148,7 +157,7 @@ namespace Knoten
                     end = false;
                     break;
                 case "endall":
-                  //  end = false;
+                    end = false;
                     foreach (var node in allNodes)
                     {
                         if (node.id != id) { 
@@ -159,15 +168,39 @@ namespace Knoten
                     break;
                 case "init":
                     initator = true;
+                    Console.WriteLine("Knoten " + this.id + " ist jetzt Initiator");
                     break;
             }
         }
 
-
+        /**
+         * Sends a msg to a node
+         */
         private void sendMessage(String msg, Knoten node)
         {
+            if (sendId) { 
+                sendId = false;
+                foreach (var n in neighBors) 
+                    sendMessage(node.id.ToString(), n);
+            }
+            try { 
             //send a msg to a tcp listener
-            TcpClient client = new TcpClient();
+            TcpClient client = new TcpClient(node.ip, node.port);
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes(msg);
+
+            NetworkStream stream = client.GetStream();
+
+            // Send the message to the connected TcpServer. 
+            stream.Write(data, 0, data.Length);
+
+            Console.WriteLine("Sent " + DateTime.Now + ":{0}", msg);
+            stream.Close();
+            client.Close();
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Knoten " + node.id + " nicht vergeben oder nicht erreichbar");
+            }
         }
 
         /**
@@ -203,6 +236,9 @@ namespace Knoten
             // Suspend the screen.
         }
 
+        /**
+         * Init a this node, adds the neibors and gets the information about hisself
+         */
         public void nodeInit()
         {
             if (this.id != 0 && allNodes.Count != 0)
@@ -215,7 +251,6 @@ namespace Knoten
                         //own informations
                         this.ip = info.ip;
                         this.port = info.port;
-                        // use a newer version with ip adresse
                     }
                     else if(neighBors.Count < 3)
                     {
