@@ -9,8 +9,12 @@ namespace Graphgen
 {
     class Program
     {
+        /**
+         * Generates a random graphviz file
+         */
         static void Main(string[] args)
         {
+
         }
     }
 }

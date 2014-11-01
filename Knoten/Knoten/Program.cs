@@ -10,6 +10,7 @@ namespace Knoten
     {
         static void Main(string[] args)
         {
+            //TODO: read the files and id from args
            // if (args.Length != 0) {
                Knoten k = new Knoten(1);//Convert.ToInt32(args[0]));
                k.readNodes("test.txt");
