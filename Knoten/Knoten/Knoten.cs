@@ -19,6 +19,7 @@ namespace Knoten
         public Boolean end;
         public Boolean initator;
         public Boolean sendId;
+        public List<String> rumors;
 
         public Knoten(int id, String ip, int port)
         {
@@ -29,6 +30,8 @@ namespace Knoten
             neighBors = new List<Knoten>();
             end = true;
             sendId = true;
+            rumors = new List<string>();
+
         }
 
         public Knoten()
@@ -37,6 +40,8 @@ namespace Knoten
             neighBors = new List<Knoten>();
             end = true;
             sendId = true;
+            rumors = new List<string>();
+
         }
 
         public Knoten(int id)
@@ -46,6 +51,7 @@ namespace Knoten
             this.id = id;
             end = true;
             sendId = true;
+            rumors = new List<string>();
         }
 
         /**
@@ -137,14 +143,14 @@ namespace Knoten
             if (msg.Contains("ctrl#") || msg.Contains("msg#"))
             {
                 String msgtyp = msg.Split('#')[0];
-                msg = msg.Split('#')[1];
+                // msg = msg.Split('#')[1];
                 switch (msgtyp)
                 {
                     case "ctrl":
                         ctrlMsg(msg);
                         break;
                     case "msg":
-                        normaMsg(msg);
+                        normalMsg(msg);
                         break;
                 }
             }
@@ -153,10 +159,56 @@ namespace Knoten
         /**
          * Analyse a normal Msg
          */
-        private void normaMsg(string msg)
+        private void normalMsg(string msg)
         {
-            foreach (var node in neighBors)
-                sendMessage(msg, node);
+            if (rumors.Contains(msg.Split('#')[1]))
+            {
+                Console.WriteLine("Know this rumor Allready");
+            }
+            else
+            {
+
+
+                Console.WriteLine("in nomral msg " + msg);
+                try
+                {
+
+                    if (initator)
+                    {
+                        rumors.Add(msg.Split('#')[1]);
+                        //im the initator and send this msg to all my neighbors
+                        msg = msg + "#" + this.id;
+                        foreach (var node in neighBors)
+                        {
+                            sendMessage(msg, node);
+                        }
+
+                    }
+                    else
+                    {
+                        rumors.Add(msg.Split('#')[1]);
+                        //im not the iniotator so i have to look at the id 
+                        String[] smsg = msg.Split('#');
+                        int incId = Convert.ToInt32(smsg[2]);
+                        msg = smsg[0] + "#" + smsg[1] + "#" + this.id;
+                        Console.WriteLine("after split in nomral " + msg);
+                        foreach (var node in neighBors)
+                        {
+                            if (!(incId == node.id))
+                            {
+
+                                sendMessage(msg, node);
+                            }
+
+                        }
+
+                    }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Im not an Initator");
+                }
+            }
         }
 
         /**
@@ -166,10 +218,10 @@ namespace Knoten
         {
             switch (msg)
             {
-                case "end":
+                case "ctrl#end":
                     end = false;
                     break;
-                case "endall":
+                case "ctrl#endall":
                     end = false;
                     foreach (var node in allNodes)
                     {
@@ -180,7 +232,7 @@ namespace Knoten
                         }
                     }
                     break;
-                case "init":
+                case "ctrl#init":
                     initator = true;
                     Console.WriteLine("Knoten " + this.id + " ist jetzt Initiator");
                     break;
@@ -192,11 +244,16 @@ namespace Knoten
          */
         private void sendMessage(String msg, Knoten node)
         {
+
             if (sendId)
             {
                 sendId = false;
                 foreach (var n in neighBors)
+                {
+                    Console.WriteLine("Want to Send Id to my neighbors: " + n.id);
                     sendMessage(node.id.ToString(), n);
+                }
+
             }
             try
             {
@@ -215,7 +272,7 @@ namespace Knoten
             }
             catch (SocketException)
             {
-                Console.WriteLine("Knoten " + node.id + " nicht vergeben oder nicht erreichbar");
+                Console.WriteLine("At Sending the Msg: " + msg + ", Knoten " + node.id + " nicht vergeben oder nicht erreichbar");
             }
         }
 
