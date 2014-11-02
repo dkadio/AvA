@@ -11,6 +11,13 @@ namespace Steuerung
     {
         static void Main(string[] args)
         {
+            if (args.Length == 0) 
+            {
+                Console.WriteLine(".exe msg port");
+            }
+            else 
+            { 
+           
             try
             {
                 String server = "localhost";
@@ -60,7 +67,7 @@ namespace Steuerung
             {
                 Console.WriteLine("SocketException: {0}", e);
             }
-
+            }
         }
     }
 }
