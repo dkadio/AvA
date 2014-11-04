@@ -164,6 +164,7 @@ namespace Knoten
             if (rumors.Contains(msg.Split('#')[1]))
             {
                 Console.WriteLine("Know this rumor Allready");
+                //TODO increment the rumorcoutner
             }
             else
             {
