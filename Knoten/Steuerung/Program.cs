@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Steuerung
 {
-    class Program
+   class Program
     {   
         //used to send commands on special port with special msg
         static void Main(string[] args)
