@@ -326,10 +326,10 @@ namespace Knoten
                         this.ip = info.ip;
                         this.port = info.port;
                     }
-                    // else if(neighBors.Count < 3) //TODO: das braucht man nicht mehr wenn der alles aus der graphviz datei ausliest
-                    // {
-                    //     neighBors.Add(info);
-                    // }
+                     else if(neighBors.Count < 3) //TODO: das braucht man nicht mehr wenn der alles aus der graphviz datei ausliest
+                     {
+                         neighBors.Add(info);
+                    }
                 }
             }
         }
