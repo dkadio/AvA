@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 
 namespace Knoten
 {
 
-    class Knoten
+    class Knoten 
     {
         public int id { get; set; }
         public String ip { get; set; }
@@ -348,6 +349,8 @@ namespace Knoten
          */
         internal void readGraph(string path)
         {
+            for(var i = 0; i < neighBors.Count; i++) //Delete the older Items and add the new neighbors
+            neighBors.Remove(neighBors[i]);
             string line;
             int counter = 0;
             // Read the file and display it line by line.

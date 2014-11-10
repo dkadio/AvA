@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
-
+using Knoten;
 namespace Steuerung
 {
    class Program
@@ -21,6 +23,8 @@ namespace Steuerung
            
             try
             {
+                IFormatter formatter = new BinaryFormatter();
+                
                 String server = "localhost";
                 String message = args[0];
                 // Create a TcpClient.
@@ -37,7 +41,7 @@ namespace Steuerung
                 //  Stream stream = client.GetStream();
 
                 NetworkStream stream = client.GetStream();
-
+              ///////  formatter.Serialize(stream, new Message(1, "jbasd", "ctrl"));
                 // Send the message to the connected TcpServer. 
                 stream.Write(data, 0, data.Length);
 
