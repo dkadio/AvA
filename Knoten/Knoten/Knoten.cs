@@ -6,12 +6,16 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace Knoten
 {
+    
 
     class Knoten 
     {
+        public const string CTRLMSG = "ctrl";
+        public const string NORMALMSG = "msg";
         public int id { get; set; }
         public String ip { get; set; }
         public int port { get; set; }
@@ -20,7 +24,7 @@ namespace Knoten
         public Boolean end;
         public Boolean initator;
         public Boolean sendId;
-        public List<String> rumors;
+        public List<Rumor> rumors;
 
         public Knoten(int id, String ip, int port)
         {
@@ -31,7 +35,7 @@ namespace Knoten
             neighBors = new List<Knoten>();
             end = true;
             sendId = true;
-            rumors = new List<string>();
+            rumors = new List<Rumor>();
 
         }
 
@@ -41,7 +45,7 @@ namespace Knoten
             neighBors = new List<Knoten>();
             end = true;
             sendId = true;
-            rumors = new List<string>();
+            rumors = new List<Rumor>();
 
         }
 
@@ -52,7 +56,7 @@ namespace Knoten
             this.id = id;
             end = true;
             sendId = true;
-            rumors = new List<string>();
+            rumors = new List<Rumor>();
         }
 
         /**
@@ -78,6 +82,7 @@ namespace Knoten
                 // Enter the listening loop.
                 while (end)
                 {
+                    Console.WriteLine("* * * *********************************");
                     Console.Write("Waiting for a connection... ");
 
                     // Perform a blocking call to accept requests.
@@ -91,9 +96,10 @@ namespace Knoten
                     NetworkStream stream = client.GetStream();
 
                     int i;
-
+                    XmlSerializer reader = new XmlSerializer(typeof(Message));
+                    Message msg = (Message) reader.Deserialize(stream);
                     // Loop to receive all the data sent by the client.
-
+/*
                     while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
                         // Translate data bytes to a ASCII string.
@@ -111,13 +117,16 @@ namespace Knoten
                         //   Console.WriteLine("Sent " + DateTime.Now + ":{0}", data);
 
                     }
+                    */
 
-
-                    readMessage(data);
+                    readMessage(msg);
                     // Shutdown and end connection
                     client.Close();
 
                 }
+
+                
+
             }
             catch (System.IO.IOException)
             {
@@ -138,19 +147,24 @@ namespace Knoten
         /**
          * reads a msg and decide if its a ctrl oder a normal msg
          */
-        public void readMessage(String msg)
+        public void readMessage(Message msg)
         {
+            Console.WriteLine("*********new MSG*******");
+            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  " + DateTime.Now);
             Console.WriteLine("Werte Nachricht aus");
-            if (msg.Contains("ctrl#") || msg.Contains("msg#"))
+
+            if (msg.typ != null)
             {
-                String msgtyp = msg.Split('#')[0];
+                //String msgtyp = msg.Split('#')[0];
                 // msg = msg.Split('#')[1];
-                switch (msgtyp)
+                switch (msg.typ)
                 {
-                    case "ctrl":
+                    case Knoten.CTRLMSG:
+                        Console.WriteLine(msg.typ + "/Knontrollnachricht erhalten");
                         ctrlMsg(msg);
                         break;
-                    case "msg":
+                    case Knoten.NORMALMSG:
+                        Console.WriteLine(msg.typ + "/Normale Nachricht erhalten");
                         normalMsg(msg);
                         break;
                 }
@@ -160,26 +174,26 @@ namespace Knoten
         /**
          * Analyse a normal Msg
          */
-        private void normalMsg(string msg)
+        private void normalMsg(Message msg)
         {
-            if (rumors.Contains(msg.Split('#')[1]))
+            if (rumors.Contains(new Rumor(0, msg.nachricht)))
             {
                 Console.WriteLine("Know this rumor Allready");
-                //TODO increment the rumorcoutner
+                Console.WriteLine("*#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#00");
+                rumors[rumors.IndexOf(new Rumor(0, msg.nachricht))].counter++;
+                Console.WriteLine(rumors[rumors.IndexOf(new Rumor(0, msg.nachricht))].counter);
             }
             else
             {
-
-
-                Console.WriteLine("in nomral msg " + msg);
+                rumors.Add(new Rumor(0, msg.nachricht));
                 try
                 {
 
                     if (initator)
                     {
-                        rumors.Add(msg.Split('#')[1]);
+                        Console.WriteLine("I am the Initiator");
                         //im the initator and send this msg to all my neighbors
-                        msg = msg + "#" + this.id;
+                        msg.senderId = this.id;
                         foreach (var node in neighBors)
                         {
                             sendMessage(msg, node);
@@ -188,17 +202,16 @@ namespace Knoten
                     }
                     else
                     {
-                        rumors.Add(msg.Split('#')[1]);
                         //im not the iniotator so i have to look at the id 
-                        String[] smsg = msg.Split('#');
-                        int incId = Convert.ToInt32(smsg[2]);
-                        msg = smsg[0] + "#" + smsg[1] + "#" + this.id;
-                        Console.WriteLine("after split in nomral " + msg);
+                        Console.WriteLine("I am no Initiator");
+
+                        int incId = msg.senderId;
+                        msg.senderId = this.id;
+                        Console.WriteLine("I send this msg to all my neighbors");
                         foreach (var node in neighBors)
                         {
                             if (!(incId == node.id))
                             {
-
                                 sendMessage(msg, node);
                             }
 
@@ -216,27 +229,30 @@ namespace Knoten
         /**
          * Analyse a Controllmsg
          */
-        private void ctrlMsg(string msg)
+        private void ctrlMsg(Message msg)
         {
-            switch (msg)
+            switch (msg.nachricht)
             {
-                case "ctrl#end":
+                case "end":
                     end = false;
                     break;
-                case "ctrl#endall":
+                case "endall":
                     end = false;
                     foreach (var node in allNodes)
                     {
                         if (node.id != id)
                         {
-                            Console.WriteLine("Send msg to id: " + node.id);
-                            sendMessage("ctrl#" + msg, node);
+                            Console.WriteLine("End node " + node.id);
+                            sendMessage(msg, node);
                         }
                     }
                     break;
-                case "ctrl#init":
+                case "init":
                     initator = true;
                     Console.WriteLine("Knoten " + this.id + " ist jetzt Initiator");
+                    break;
+                case "id":
+                    Console.WriteLine("Knoten " + msg.senderId + " hat mir id gesendet");
                     break;
             }
         }
@@ -244,37 +260,46 @@ namespace Knoten
         /**
          * Sends a msg to a node
          */
-        private void sendMessage(String msg, Knoten node)
+        private void sendMessage(Message msg, Knoten node)
         {
 
             if (sendId)
             {
                 sendId = false;
-                foreach (var n in neighBors)
-                {
-                    Console.WriteLine("Want to Send Id to my neighbors: " + n.id);
-                    sendMessage(node.id.ToString(), n);
-                }
+                sendIdTo();
 
             }
             try
             {
                 //send a msg to a tcp listener
                 TcpClient client = new TcpClient(node.ip, node.port);
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(msg);
+                //Byte[] data = System.Text.Encoding.ASCII.GetBytes(msg);
 
                 NetworkStream stream = client.GetStream();
-
+                var writer = new XmlSerializer(typeof(Message));
                 // Send the message to the connected TcpServer. 
-                stream.Write(data, 0, data.Length);
-
-                Console.WriteLine("Sent " + DateTime.Now + ":{0}", msg);
+                //stream.Write(data, 0, data.Length);
+                writer.Serialize(stream, msg);
+                Console.WriteLine("##############################");
+                Console.WriteLine("Sent  to " + node.id +  msg.nachricht + "  " + DateTime.Now);
+                Console.WriteLine("##############################");
                 stream.Close();
                 client.Close();
             }
             catch (SocketException)
             {
-                Console.WriteLine("At Sending the Msg: " + msg + ", Knoten " + node.id + " nicht vergeben oder nicht erreichbar");
+                Console.WriteLine("At Sending the Msg: " + msg.nachricht + ", Knoten " + node.id + " nicht vergeben oder nicht erreichbar");
+            }
+        }
+
+        private void sendIdTo()
+        {
+            //Console.WriteLine("before i send the message to neighbours i have to send my it to them");
+            Message init = new Message(this.id, "id", Knoten.CTRLMSG);
+            foreach (var n in neighBors)
+            {
+                //Console.WriteLine("Want to Send Id to my neighbors: " + n.id);
+                sendMessage(init, n);
             }
         }
 
@@ -349,13 +374,15 @@ namespace Knoten
          */
         internal void readGraph(string path)
         {
-            for(var i = 0; i < neighBors.Count; i++) //Delete the older Items and add the new neighbors
-            neighBors.Remove(neighBors[i]);
+         //   for (var i = 0; i < neighBors.Count; i++)
+             //Delete the older Items and add the new neighbors
+           //     neighBors.Remove(neighBors[i]);
+            neighBors = new List<Knoten>();
             string line;
             int counter = 0;
             // Read the file and display it line by line.
             System.IO.StreamReader file =
-               new System.IO.StreamReader("../../" + path);
+               new System.IO.StreamReader("C:\\Users\\deniz\\Source\\Repos\\AvA\\Knoten\\Knoten/" + path);
             while ((line = file.ReadLine()) != null)
             {
                 if (line.EndsWith(";"))

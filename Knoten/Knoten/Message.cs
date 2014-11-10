@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Knoten
 {
+    [Serializable]
     public class Message 
     {
         public int senderId;
@@ -18,6 +19,9 @@ namespace Knoten
             this.nachricht = nachricht;
             this.typ = typ;
         }
+        public Message()
+        {
 
+        }
     }
 }
