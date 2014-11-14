@@ -9,6 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphgen", "Graphgen\Graphg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steuerung", "Steuerung\Steuerung.csproj", "{A1200CFD-C6DE-4CAE-9793-04EC5719705A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{E37B0184-717D-4B9A-AEA2-A4C7C9191B46}"
+	ProjectSection(SolutionItems) = preProject
+		Graphgen\bin\Debug\Graphgen.exe = Graphgen\bin\Debug\Graphgen.exe
+		Knoten\bin\Debug\Knoten.exe = Knoten\bin\Debug\Knoten.exe
+		Steuerung\bin\Debug\Steuerung.exe = Steuerung\bin\Debug\Steuerung.exe
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
