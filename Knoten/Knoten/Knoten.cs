@@ -317,7 +317,7 @@ namespace Knoten
             int counter = 0;
             // Read the file and display it line by line.
             System.IO.StreamReader file =
-               new System.IO.StreamReader("../../" + filePath);
+               new System.IO.StreamReader(filePath);
             while ((line = file.ReadLine()) != null)
             {
                 String[] words = line.Split(new char[] { ' ', ':' });
@@ -382,7 +382,7 @@ namespace Knoten
             int counter = 0;
             // Read the file and display it line by line.
             System.IO.StreamReader file =
-               new System.IO.StreamReader("C:\\Users\\deniz\\Source\\Repos\\AvA\\Knoten\\Knoten/" + path);
+               new System.IO.StreamReader(path);
             while ((line = file.ReadLine()) != null)
             {
                 if (line.EndsWith(";"))

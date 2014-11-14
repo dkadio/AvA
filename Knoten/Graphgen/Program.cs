@@ -10,6 +10,8 @@ namespace Graphgen
 {
     class Program
     {
+
+
         /**
          * Generates a random graphviz file
          */
@@ -53,7 +55,7 @@ namespace Graphgen
                 {
                     var j = r.Next(1, init);
                     var k = r.Next(1, init);
-                    if (j == k)
+                    if (j == k )
                     {
                         i--;
                     }
@@ -63,15 +65,28 @@ namespace Graphgen
                     }
                 }
                     file.WriteLine("}");
+                    removedoubleedges(file);
                 file.Close();
+          
             }
             
         }
 
+        private static void removedoubleedges(StreamWriter file)
+        {
+            //remove double edges
+            //read file in list and check if there is an double entry
+        }
+
         private static void inserEdge(StreamWriter file, int i, int j)
         {
-            file.WriteLine(i + " -- " + j + ";");
-            Console.WriteLine("inserted edge: " + i + " -- " + j);
+
+
+
+            file.WriteLine(j + " -- " + i + ";");
+                Console.WriteLine("inserted edge: " + i + " -- " + j);
+            
+            
         }
     }
 }
