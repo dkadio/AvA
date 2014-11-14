@@ -82,7 +82,6 @@ namespace Knoten
                 // Enter the listening loop.
                 while (end)
                 {
-                    Console.WriteLine("* * * *********************************");
                     Console.Write("Waiting for a connection... ");
 
                     // Perform a blocking call to accept requests.
@@ -149,9 +148,11 @@ namespace Knoten
          */
         public void readMessage(Message msg)
         {
-            Console.WriteLine("*********new MSG*******");
-            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  " + DateTime.Now);
-            Console.WriteLine("Werte Nachricht aus");
+            Console.WriteLine("* Inc MSG *****************************");
+            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  at " + DateTime.Now);
+            Console.WriteLine("* !Inc MSG *****************************");
+
+            //Console.WriteLine("Werte Nachricht aus");
 
             if (msg.typ != null)
             {
@@ -160,11 +161,11 @@ namespace Knoten
                 switch (msg.typ)
                 {
                     case Knoten.CTRLMSG:
-                        Console.WriteLine(msg.typ + "/Knontrollnachricht erhalten");
+                       // Console.WriteLine(msg.typ + "/Knontrollnachricht erhalten");
                         ctrlMsg(msg);
                         break;
                     case Knoten.NORMALMSG:
-                        Console.WriteLine(msg.typ + "/Normale Nachricht erhalten");
+                       // Console.WriteLine(msg.typ + "/Normale Nachricht erhalten");
                         normalMsg(msg);
                         break;
                 }
@@ -178,10 +179,9 @@ namespace Knoten
         {
             if (rumors.Contains(new Rumor(0, msg.nachricht)))
             {
-                Console.WriteLine("Know this rumor Allready");
-                Console.WriteLine("*#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#00");
+                Console.WriteLine("-->Know this rumor Allready");
                 rumors[rumors.IndexOf(new Rumor(0, msg.nachricht))].counter++;
-                Console.WriteLine(rumors[rumors.IndexOf(new Rumor(0, msg.nachricht))].counter);
+                Console.WriteLine("Heard this msg for: " + rumors[rumors.IndexOf(new Rumor(0, msg.nachricht))].counter + " Times");
             }
             else
             {
@@ -249,10 +249,10 @@ namespace Knoten
                     break;
                 case "init":
                     initator = true;
-                    Console.WriteLine("Knoten " + this.id + " ist jetzt Initiator");
+                    Console.WriteLine("node " + this.id + " is now Initiator");
                     break;
                 case "id":
-                    Console.WriteLine("Knoten " + msg.senderId + " hat mir id gesendet");
+                    Console.WriteLine("node " + msg.senderId + " has send my its id");
                     break;
             }
         }
@@ -280,15 +280,15 @@ namespace Knoten
                 // Send the message to the connected TcpServer. 
                 //stream.Write(data, 0, data.Length);
                 writer.Serialize(stream, msg);
-                Console.WriteLine("##############################");
-                Console.WriteLine("Sent  to " + node.id +  msg.nachricht + "  " + DateTime.Now);
-                Console.WriteLine("##############################");
+                Console.WriteLine("Send Msg ##############################");
+                Console.WriteLine("Sent  to " + node.id + ", msg: " +  msg.nachricht + ", at " + DateTime.Now);
+                Console.WriteLine("!Send Msg ##############################");
                 stream.Close();
                 client.Close();
             }
             catch (SocketException)
             {
-                Console.WriteLine("At Sending the Msg: " + msg.nachricht + ", Knoten " + node.id + " nicht vergeben oder nicht erreichbar");
+                Console.WriteLine("At Sending the Msg: " + msg.nachricht + ", node " + node.id + " not available");
             }
         }
 
@@ -417,11 +417,55 @@ namespace Knoten
             {
                 if (id1 == node.id)
                 {
-                    Console.WriteLine("nachbar hinzugefuegt, id: " + id1);
+                    Console.WriteLine("added neighbor, id: " + id1);
                     neighBors.Add(node);
                 }
 
             }
         }
+
+        public void neighborLimit(int id)
+        {
+            Random rnd = new Random();
+            int d = 0;
+            switch (id)
+            {
+                case 1:
+                    //2neigbors
+                    deleteButD(rnd, 2);
+                    break;
+                case 2:
+                    //d-2 neighbors
+                    d = neighBors.Count - 2;
+                    deleteButD(rnd, d);
+                    break;
+                case 3:
+                    //(d-1)/2 neighbors
+                    d = (neighBors.Count - 1)/2;
+                    deleteButD(rnd, d);
+                    break;
+            }
+        }
+
+        private void deleteButD(Random rnd, int d)
+        {
+            Console.WriteLine("Neigbors before: " + neighBors.Count);
+            if (d < 1)
+            {
+                Console.WriteLine("neighbr number < 1 --> no neighbors");
+                neighBors = new List<Knoten>();
+            }
+            else
+            {
+                for (int i = 0; i < neighBors.Count; i++)
+                {
+                    if (neighBors.Count > d)
+                    {
+                        neighBors.RemoveAt(rnd.Next(0, neighBors.Count));
+                    }
+                }
+            }
+            Console.WriteLine("Neigbors now: " + neighBors.Count);
+        } 
     }
 }

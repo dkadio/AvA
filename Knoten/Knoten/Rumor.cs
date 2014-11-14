@@ -11,7 +11,6 @@ namespace Knoten
         public String rumor;
         public int counter;
 
-
         public Rumor(int p1, string p2)
         {
             // TODO: Complete member initialization
@@ -22,6 +21,13 @@ namespace Knoten
         public bool Equals(Rumor other)
         {
             return rumor == other.rumor;
+        }
+
+        public bool believe(int n)
+        {
+            if (counter >= n)
+                return true;
+            else return false;
         }
     }
 }
