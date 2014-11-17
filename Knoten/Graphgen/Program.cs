@@ -15,17 +15,19 @@ namespace Graphgen
         /**
          * Generates a random graphviz file
          */
+     
         static void Main(string[] args)
         {
-            if (args[0] == "?" || args.Length == 0)
+            List<String> insertededges = new List<string>();
+            if (args[0] == "?" || args.Length < 1)
             {
                 Console.WriteLine("graphgen.exe nodeanzahl anzahl kanten");
             }
             else
             {
                 Console.WriteLine("Generate graphiz");
-                int init = Convert.ToInt32(args[0]);
-                int edges = Convert.ToInt32(args[1]);
+                int init = Convert.ToInt32(args[0]); //anzahl knoten
+                int edges = Convert.ToInt32(args[1]); //anzahl kanten
                 if (init < edges)
                 {
                     edges -= init-1;
@@ -34,7 +36,8 @@ namespace Graphgen
                 }
                 else
                 {
-                    Console.WriteLine("Kanten Anzahl kleiner als Knotenanzahl!!");
+                    Console.WriteLine("Kanten Anzahl kleiner oder gleich Knotenanzahl!!");
+                    edges = 1;
                 }
                 String filename = "graph1.gv";
                 StreamWriter file = new StreamWriter(filename);
@@ -47,7 +50,7 @@ namespace Graphgen
                     if (i > 1)
                     {
                         var j = r.Next(1, i);
-                        inserEdge(file, i, j);
+                        inserEdge(file, i, j, insertededges);
                     }
                     
                 }
@@ -61,32 +64,42 @@ namespace Graphgen
                     }
                     else
                     {
-                        inserEdge(file, j, k);
+                        inserEdge(file, j, k, insertededges);
                     }
                 }
                     file.WriteLine("}");
-                    removedoubleedges(file);
+                    removedoubleedges(file, insertededges);
                 file.Close();
           
             }
             
         }
 
-        private static void removedoubleedges(StreamWriter file)
+        private static void removedoubleedges(StreamWriter file, List<String> insertededges)
         {
             //remove double edges
             //read file in list and check if there is an double entry
+           
         }
 
-        private static void inserEdge(StreamWriter file, int i, int j)
+        private static void inserEdge(StreamWriter file, int i, int j, List<String> insertededges)
         {
 
+            String edge = j + " -- " + i + ";";
+            String edge2 = i + " -- " + j + ";";
+            if (!insertededges.Contains(edge) || !insertededges.Contains(edge2))
+            {
+                file.WriteLine(edge);
+                Console.WriteLine("insert edge: " + edge);
+            }
+            else
+            {
+                Console.WriteLine("Edge was allrdy inserted");
+            }
+          
+            insertededges.Add(edge);
+            insertededges.Add(edge2);
 
-
-            file.WriteLine(j + " -- " + i + ";");
-                Console.WriteLine("inserted edge: " + i + " -- " + j);
-            
-            
         }
     }
 }
