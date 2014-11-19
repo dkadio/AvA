@@ -82,7 +82,7 @@ namespace Knoten
                 // Enter the listening loop.
                 while (end)
                 {
-                    Console.Write("Waiting for a connection... ");
+                    Console.Write(Environment.NewLine + "Waiting for a connection... " + Environment.NewLine);
 
                     // Perform a blocking call to accept requests.
                     // You could also user server.AcceptSocket() here.
@@ -149,7 +149,7 @@ namespace Knoten
         public void readMessage(Message msg)
         {
             Console.WriteLine("* Inc MSG *****************************");
-            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  at " + DateTime.Now + Environment.NewLine);
+            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  at " + DateTime.Now);
 
             //Console.WriteLine("Werte Nachricht aus");
 
@@ -239,7 +239,7 @@ namespace Knoten
                     {
                         if (node.id != id && this.initator)
                         {
-                            Console.WriteLine("End node " + node.id);
+                            Console.WriteLine("End node " + node.id + " " + DateTime.Now);
                             sendMessage(msg, node);
                         }
                     }
@@ -249,7 +249,7 @@ namespace Knoten
                     Console.WriteLine("node " + this.id + " is now Initiator");
                     break;
                 case "id":
-                    Console.WriteLine("node " + msg.senderId + " has send my its id");
+                    Console.WriteLine("node " + msg.senderId + " has send me its id");
                     break;
             }
         }
@@ -286,7 +286,7 @@ namespace Knoten
             }
             catch (SocketException)
             {
-                Console.WriteLine(" At Sending the Msg: " + msg.nachricht + ", node " + node.id + " not available");
+                Console.WriteLine(" At Sending the Msg: " + msg.nachricht + ", node " + node.id + " not available " + DateTime.Now);
             }
         }
 
