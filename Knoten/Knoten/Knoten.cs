@@ -214,9 +214,7 @@ namespace Knoten
                             {
                                 sendMessage(msg, node);
                             }
-
                         }
-
                     }
                 }
                 catch (IndexOutOfRangeException)
@@ -240,7 +238,7 @@ namespace Knoten
                     end = false;
                     foreach (var node in allNodes)
                     {
-                        if (node.id != id)
+                        if (node.id != id && this.initator)
                         {
                             Console.WriteLine("End node " + node.id);
                             sendMessage(msg, node);
