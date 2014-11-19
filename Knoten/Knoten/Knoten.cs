@@ -149,8 +149,7 @@ namespace Knoten
         public void readMessage(Message msg)
         {
             Console.WriteLine("* Inc MSG *****************************");
-            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  at " + DateTime.Now);
-            Console.WriteLine("* !Inc MSG *****************************");
+            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  at " + DateTime.Now + Environment.NewLine);
 
             //Console.WriteLine("Werte Nachricht aus");
 
@@ -277,16 +276,17 @@ namespace Knoten
                 var writer = new XmlSerializer(typeof(Message));
                 // Send the message to the connected TcpServer. 
                 //stream.Write(data, 0, data.Length);
-                writer.Serialize(stream, msg);
                 Console.WriteLine("Send Msg ##############################");
-                Console.WriteLine("Sent  to " + node.id + ", msg: " +  msg.nachricht + ", at " + DateTime.Now);
-                Console.WriteLine("!Send Msg ##############################");
+                Console.WriteLine("Starte Sende " + DateTime.Now);
+                writer.Serialize(stream, msg);
+                Console.WriteLine("Sent  to " + node.id + ", msg: " + msg.nachricht + ", at " + DateTime.Now);
                 stream.Close();
                 client.Close();
+                Console.WriteLine("Verbindung Beendet " + DateTime.Now + Environment.NewLine);
             }
             catch (SocketException)
             {
-                Console.WriteLine("At Sending the Msg: " + msg.nachricht + ", node " + node.id + " not available");
+                Console.WriteLine(" At Sending the Msg: " + msg.nachricht + ", node " + node.id + " not available");
             }
         }
 
@@ -450,7 +450,7 @@ namespace Knoten
             Console.WriteLine("Neigbors before: " + neighBors.Count);
             if (d < 1)
             {
-                Console.WriteLine("neighbr number < 1 --> no neighbors");
+                Console.WriteLine("neighbor number < 1 --> no neighbors");
                 neighBors = new List<Knoten>();
             }
             else
