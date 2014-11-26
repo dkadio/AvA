@@ -1,0 +1,1 @@
+FOR /L %%i in (1, 1, %1) do start Knoten.exe %%i %2
