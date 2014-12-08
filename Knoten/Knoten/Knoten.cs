@@ -14,8 +14,6 @@ namespace Knoten
 
     class Knoten 
     {
-        public const string CTRLMSG = "ctrl";
-        public const string NORMALMSG = "msg";
         public int id { get; set; }
         public String ip { get; set; }
         public int port { get; set; }
@@ -146,7 +144,7 @@ namespace Knoten
         /**
          * reads a msg and decide if its a ctrl oder a normal msg
          */
-        public void readMessage(Message msg)
+        public virtual void readMessage(Message msg)
         {
             Console.WriteLine("* Inc MSG *****************************");
             Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  at " + DateTime.Now);
@@ -159,11 +157,11 @@ namespace Knoten
                 // msg = msg.Split('#')[1];
                 switch (msg.typ)
                 {
-                    case Knoten.CTRLMSG:
+                    case Message.CONTROLL_MSG:
                        // Console.WriteLine(msg.typ + "/Knontrollnachricht erhalten");
                         ctrlMsg(msg);
                         break;
-                    case Knoten.NORMALMSG:
+                    case Message.NORMAL_MSG:
                        // Console.WriteLine(msg.typ + "/Normale Nachricht erhalten");
                         normalMsg(msg);
                         break;
@@ -257,7 +255,7 @@ namespace Knoten
         /**
          * Sends a msg to a node
          */
-        private void sendMessage(Message msg, Knoten node)
+        public void sendMessage(Message msg, Knoten node)
         {
 
             if (sendId)
@@ -293,7 +291,7 @@ namespace Knoten
         private void sendIdTo()
         {
             //Console.WriteLine("before i send the message to neighbours i have to send my it to them");
-            Message init = new Message(this.id, "id", Knoten.CTRLMSG);
+            Message init = new Message(this.id, "id", Message.CONTROLL_MSG);
             foreach (var n in neighBors)
             {
                 //Console.WriteLine("Want to Send Id to my neighbors: " + n.id);
