@@ -13,9 +13,10 @@ namespace Knoten
         public String nachricht;
         public String typ;
         public Produkt product;
-        public  const String CONTROLL_MSG = "ctrl";
-        public  const String NORMAL_MSG = "msg";
-        public  const String CAMPAIGN_MSG = "campaign";
+        public String nodetyp;
+        public const String CONTROLL_MSG = "ctrl";
+        public const String NORMAL_MSG = "msg";
+        public const String CAMPAIGN_MSG = "campaign";
 
 
         public Message(int senderId, String nachricht, String typ)
@@ -32,6 +33,15 @@ namespace Knoten
             this.typ = typ;
             this.product = product;
         }
+
+        public Message(int senderId, String nachricht, String typ, String nodetyp)
+        {
+            this.senderId = senderId;
+            this.nachricht = nachricht;
+            this.typ = typ;
+            this.nodetyp = nodetyp;
+        }
+
 
         public Message()
         {

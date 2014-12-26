@@ -56,5 +56,38 @@ namespace Knoten
             // kaufe das produkt und sag es weiter
         }
 
+       private override void sendIdTo(){
+           Message idmsg = new Message(this.id, "id", Message.CONTROLL_MSG, this.CID);
+           foreach (var n in neighBors)
+           {
+               //Console.WriteLine("Want to Send Id to my neighbors: " + n.id);
+               sendMessage(idmsg, n);
+           }
+       }
+
+       private override void readIdFromNeighbor(Message msg){
+           //nachschauen um was es sich fuer einen knoten handelt.
+           //entsprechend den nachbarknoten casaten und in einer liste verwalten
+           foreach (var n in neighBors)
+           {
+               if (n.id == msg.senderId)
+               {
+                   castNode(n, msg);
+               }
+           }
+       }
+
+       private void castNode(Knoten n, Message msg)
+       {
+           if (msg.nodetyp.StartsWith("C"))
+           {
+               n = new CustomerNode(n.id, n.ip, n.port);
+           }
+           else if (msg.nodetyp.StartsWith("B"))
+           {
+               n = new BusinessNode(n.id, n.ip, n.port);
+           }
+       }
+
     }
 }

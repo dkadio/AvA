@@ -247,9 +247,14 @@ namespace Knoten
                     Console.WriteLine("node " + this.id + " is now Initiator");
                     break;
                 case "id":
-                    Console.WriteLine("node " + msg.senderId + " has send me its id");
+                    readIdFromNeighbor(msg);
                     break;
             }
+        }
+
+        private virtual void readIdFromNeighbor(Message msg)
+        {
+            Console.WriteLine("node " + msg.senderId + " has send me its id");
         }
 
         /**
@@ -288,10 +293,11 @@ namespace Knoten
             }
         }
 
-        private void sendIdTo()
+        private virtual void sendIdTo()
         {
             //Console.WriteLine("before i send the message to neighbours i have to send my it to them");
             Message init = new Message(this.id, "id", Message.CONTROLL_MSG);
+            
             foreach (var n in neighBors)
             {
                 //Console.WriteLine("Want to Send Id to my neighbors: " + n.id);
