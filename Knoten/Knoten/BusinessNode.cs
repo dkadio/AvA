@@ -8,33 +8,22 @@ namespace Knoten
 {
     class BusinessNode : Knoten
     {
-        public String BID;
-        private int etat;
+        String nodeTypeId;
 
-        public Produkt product;
-
-        public BusinessNode(int id, String ip, int port)
-            : base(id, ip, port)
+        public BusinessNode(int id, String ip, int port, String nodeTypeId) : base(id, ip, port)
         {
-            this.etat = new Random().Next(5, 25);
-            this.BID = "BID" + this.id;
-            this.product = new Produkt(BID);
+            this.nodeTypeId = nodeTypeId;
         }
 
-        public void startCampaign()
+        public BusinessNode(int id, String nodeTypeId)
+            : base(id)
         {
-            if (this.etat > 0)
-            {
-                //dec etat
-                this.etat -= 5;
-                var cmsg = new Message(this.id, "Werbung", Message.CAMPAIGN_MSG, this.product);
-                //send productid to neighbors
-                foreach (var node in base.neighBors)
-                {
-                    base.sendMessage(cmsg, node);
-                    
-                }
-            }
+            this.nodeTypeId = nodeTypeId;
+        }
+
+        public override void printid()
+        {
+            Console.WriteLine("BusuinessKnioten");
         }
     }
 }

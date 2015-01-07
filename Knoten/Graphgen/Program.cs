@@ -21,7 +21,7 @@ namespace Graphgen
             List<String> insertededges = new List<string>();
             if (args[0] == "?" || args.Length < 1)
             {
-                Console.WriteLine("graphgen.exe nodeanzahl anzahl kanten");
+                Console.WriteLine("graphgen.exe nodeanzahl kantenanzahl");
             }
             else
             {

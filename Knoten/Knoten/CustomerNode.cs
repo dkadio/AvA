@@ -8,86 +8,21 @@ namespace Knoten
 {
     class CustomerNode : Knoten
     {
-        public String CID;
-        public List<Produkt> productlist;
-
-        public CustomerNode(int id, String ip, int port)
-            : base(id, ip, port)
+        String nodeTypeId;
+         public CustomerNode(int id, String ip, int port, String nodeTypeId) : base(id, ip, port)
         {
-            this.CID = "CID" + this.id;
+            this.nodeTypeId = nodeTypeId;
         }
 
-        public void buyProduct()
+        public CustomerNode(int id, String nodeTypeId)
+            : base(id)
         {
-            //send msg to neighbors 
+            this.nodeTypeId = nodeTypeId;
         }
-
-        public override void readMessage(Message msg)
+        public override void printid()
         {
-            base.readMessage(msg);
-            if (msg.typ != null)
-            {
-                switch (msg.typ)
-                {
-                    case Message.CAMPAIGN_MSG:
-                        Console.WriteLine("CAMPAING MSG");
-                        Console.WriteLine();
-                        campaingMsg(msg);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            Console.WriteLine("CustomerKnoten");
         }
-
-        private void campaingMsg(Message msg)
-        {
-            //leite nachricht an nachbarn weiter
-            foreach (var node in neighBors)
-            {
-                if (msg.senderId != node.id)
-                {
-                    sendMessage(msg, node);
-                }
-
-            }
-            // prüfe ob das produkt gekauft werden will
-
-            // kaufe das produkt und sag es weiter
-        }
-
-       private override void sendIdTo(){
-           Message idmsg = new Message(this.id, "id", Message.CONTROLL_MSG, this.CID);
-           foreach (var n in neighBors)
-           {
-               //Console.WriteLine("Want to Send Id to my neighbors: " + n.id);
-               sendMessage(idmsg, n);
-           }
-       }
-
-       private override void readIdFromNeighbor(Message msg){
-           //nachschauen um was es sich fuer einen knoten handelt.
-           //entsprechend den nachbarknoten casaten und in einer liste verwalten
-           foreach (var n in neighBors)
-           {
-               if (n.id == msg.senderId)
-               {
-                   castNode(n, msg);
-               }
-           }
-       }
-
-       private void castNode(Knoten n, Message msg)
-       {
-           if (msg.nodetyp.StartsWith("C"))
-           {
-               n = new CustomerNode(n.id, n.ip, n.port);
-           }
-           else if (msg.nodetyp.StartsWith("B"))
-           {
-               n = new BusinessNode(n.id, n.ip, n.port);
-           }
-       }
 
     }
 }

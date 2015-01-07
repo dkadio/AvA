@@ -57,6 +57,8 @@ namespace Knoten
             rumors = new List<Rumor>();
         }
 
+
+
         /**
          * Listen to inc msg, Format 
          *                      "ctrl#controllmsg" 
@@ -92,7 +94,6 @@ namespace Knoten
                     // Get a stream object for reading and writing
                     NetworkStream stream = client.GetStream();
 
-                    int i;
                     XmlSerializer reader = new XmlSerializer(typeof(Message));
                     Message msg = (Message) reader.Deserialize(stream);
                     // Loop to receive all the data sent by the client.
@@ -252,7 +253,7 @@ namespace Knoten
             }
         }
 
-        private virtual void readIdFromNeighbor(Message msg)
+        public virtual void readIdFromNeighbor(Message msg)
         {
             Console.WriteLine("node " + msg.senderId + " has send me its id");
         }
@@ -293,7 +294,7 @@ namespace Knoten
             }
         }
 
-        private virtual void sendIdTo()
+        public virtual void sendIdTo()
         {
             //Console.WriteLine("before i send the message to neighbours i have to send my it to them");
             Message init = new Message(this.id, "id", Message.CONTROLL_MSG);
@@ -326,7 +327,20 @@ namespace Knoten
                 String ip = words[1];
                 int port = Convert.ToInt32(words[2]);
                 int id = Convert.ToInt32(words[0]);
-                allNodes.Add(new Knoten(id, ip, port));
+                String nodetype = words[3];
+                if (nodetype == "BID")
+                {
+                    allNodes.Add(new BusinessNode(id, ip, port, nodetype));
+                }
+                else if (nodetype == "CID")
+                {
+                    allNodes.Add(new CustomerNode(id,ip, port, nodetype));
+                }
+                else
+                {
+                    Console.WriteLine("Normaler Knoten in " + filePath + " entdeckt");
+                    allNodes.Add(new Knoten(id, ip, port));
+                }
                 counter++;
                 //Console.WriteLine(ip);
                 // Console.WriteLine(port);
@@ -468,6 +482,11 @@ namespace Knoten
                 }
             }
             Console.WriteLine("Neigbors now: " + neighBors.Count);
-        } 
+        }
+
+        public virtual void printid()
+        {
+            Console.WriteLine("normaler Knoten");
+        }
     }
 }
