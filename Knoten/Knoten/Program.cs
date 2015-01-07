@@ -42,6 +42,14 @@ namespace Knoten
                       k = new CustomerNode(id, nodetype);
                  }
                  k.printid();
+                 k.readNodes("test.txt");
+                 k.nodeInit();
+                 k.readGraph("graph1.gv");
+                 Console.WriteLine(k.neighBors.Count);
+                 foreach (var n in k.neighBors)
+                 {
+                     Console.WriteLine(n.GetType());
+                 }
                  /* k.readNodes("test.txt");
                   k.nodeInit();
                   k.readGraph("graph1.gv");

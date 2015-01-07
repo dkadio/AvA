@@ -357,6 +357,7 @@ namespace Knoten
          */
         public void nodeInit()
         {
+            Console.WriteLine("nodeInit");
             if (this.id != 0 && allNodes.Count != 0)
             {
                 //search for your own ip and port
@@ -390,6 +391,7 @@ namespace Knoten
          */
         internal void readGraph(string path)
         {
+            Console.WriteLine("readGraph");
          //   for (var i = 0; i < neighBors.Count; i++)
              //Delete the older Items and add the new neighbors
            //     neighBors.Remove(neighBors[i]);
