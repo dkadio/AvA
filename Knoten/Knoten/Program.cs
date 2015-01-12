@@ -26,12 +26,12 @@ namespace Knoten
              if (args.Length != 0) {
                  int id = Convert.ToInt32(args[0]);
                  String nodetype = args[1];
-                 if (args.Length > 2)
+                 int buyCounter = Convert.ToInt32(args[2]);
+                 if (args.Length > 3)
                  {
-                     int believeCounter = Convert.ToInt32(args[3]);
-                     int neigborlimit = Convert.ToInt32(args[2]);
+                     int believeCounter = Convert.ToInt32(args[4]);
+                     int neigborlimit = Convert.ToInt32(args[3]);
                  }
-
                  Knoten k = new Knoten();
                  if (nodetype == "BID")
                  {
@@ -39,17 +39,15 @@ namespace Knoten
                  }
                  else if (nodetype == "CID")
                  {
-                      k = new CustomerNode(id, nodetype);
+                      k = new CustomerNode(id, nodetype, buyCounter);
                  }
                  k.printid();
                  k.readNodes("test.txt");
                  k.nodeInit();
                  k.readGraph("graph1.gv");
-                 Console.WriteLine(k.neighBors.Count);
-                 foreach (var n in k.neighBors)
-                 {
-                     Console.WriteLine(n.GetType());
-                 }
+                 k.getinformation();
+                 k.Listen();
+                 k.getProductAndNeihborInfo();
                  /* k.readNodes("test.txt");
                   k.nodeInit();
                   k.readGraph("graph1.gv");

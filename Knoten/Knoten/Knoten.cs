@@ -23,9 +23,24 @@ namespace Knoten
         public Boolean initator;
         public Boolean sendId;
         public List<Rumor> rumors;
+        public String nodeTypeId;
 
         public Knoten(int id, String ip, int port)
         {
+            this.id = id;
+            this.ip = ip;
+            this.port = port;
+            allNodes = new List<Knoten>();
+            neighBors = new List<Knoten>();
+            end = true;
+            sendId = true;
+            rumors = new List<Rumor>();
+
+        }
+
+        public Knoten(int id, String ip, int port, String nodeTypeId)
+        {
+            this.nodeTypeId = nodeTypeId;
             this.id = id;
             this.ip = ip;
             this.port = port;
@@ -225,7 +240,7 @@ namespace Knoten
         /**
          * Analyse a Controllmsg
          */
-        private void ctrlMsg(Message msg)
+        public virtual void ctrlMsg(Message msg)
         {
             switch (msg.nachricht)
             {
@@ -489,6 +504,24 @@ namespace Knoten
         public virtual void printid()
         {
             Console.WriteLine("normaler Knoten");
+        }
+
+        public virtual void getinformation()
+        {
+            Console.WriteLine("*************info*******************");
+            Console.WriteLine("id: " + id + ", ip:port: " + ip + ":" + port);
+            Console.WriteLine("Nachbaranzahl: " + neighBors.Count);
+            foreach (var n in neighBors)
+            {
+                Console.WriteLine(n.GetType());
+            }
+            Console.WriteLine("*************!info******************");
+        }
+
+        public virtual void getProductAndNeihborInfo()
+        {
+            Console.WriteLine("Normaler knoten hat keine produkte");
+
         }
     }
 }
