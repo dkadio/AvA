@@ -28,7 +28,8 @@ namespace Knoten
 
         public int extractIdFromName()
         {
-            return Convert.ToInt32(nachricht.Last());
+            String number = nachricht.Substring(nachricht.Length-1);
+            return Convert.ToInt32(number);
         }
 
 

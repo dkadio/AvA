@@ -10,6 +10,7 @@ namespace Knoten
     {
         static void Main(string[] args)
         {
+
             /*Console.WriteLine(".exe id believecounter neighbord");
             CustomerNode cnode = new CustomerNode(1, "localhost", 5000);
             cnode.readNodes("test.txt");
@@ -81,7 +82,7 @@ namespace Knoten
              }
              else
              {
-                 Console.WriteLine("id nodetype neighborlimit believecounter");
+                 Console.WriteLine("id nodetype buylimit neighborlimit believecounter");
              }
         }
     }

@@ -40,7 +40,7 @@ namespace Knoten
 
         public void extractIdFromName()
         {
-            this.id = Convert.ToInt32(produktName.Last());
+            this.id = Convert.ToInt32(produktName.Substring(produktName.Length-1));
         }
 
         public bool Equals(Produkt other)

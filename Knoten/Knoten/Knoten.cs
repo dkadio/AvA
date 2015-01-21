@@ -162,8 +162,8 @@ namespace Knoten
          */
         public virtual void readMessage(Message msg)
         {
-            Console.WriteLine("* Inc MSG *****************************");
-            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + "  at " + DateTime.Now);
+            Console.WriteLine("* Inc " + msg.typ + " MSG *****************************");
+            Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + " at " + DateTime.Now);
 
             //Console.WriteLine("Werte Nachricht aus");
 
@@ -295,7 +295,7 @@ namespace Knoten
                 var writer = new XmlSerializer(typeof(Message));
                 // Send the message to the connected TcpServer. 
                 //stream.Write(data, 0, data.Length);
-                Console.WriteLine("Send Msg ##############################");
+                Console.WriteLine("Send " + msg.typ + " Msg ##############################");
                 Console.WriteLine("Starte Sende " + DateTime.Now);
                 writer.Serialize(stream, msg);
                 Console.WriteLine("Sent  to " + node.id + ", msg: " + msg.nachricht + ", at " + DateTime.Now);

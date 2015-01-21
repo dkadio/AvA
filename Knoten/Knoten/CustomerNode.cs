@@ -20,6 +20,7 @@ namespace Knoten
             this.werbungheard = r.Next(0, 10);
             this.kaufheard = r.Next(0,10);
             this.buyCounter = buyCounter;
+            this.products = new List<Produkt>();
         }
 
         public CustomerNode(int id, String ip, int port, String nodeTypeId)
@@ -30,6 +31,8 @@ namespace Knoten
             this.werbungheard = r.Next(0, 10);
             this.kaufheard = r.Next(0, 10);
             this.buyCounter = 0;
+            this.products = new List<Produkt>();
+
         }
 
         public CustomerNode(int id, String nodeTypeId, int buyCounter)
@@ -40,6 +43,7 @@ namespace Knoten
             this.werbungheard = r.Next(0, 10);
             this.kaufheard = r.Next(0, 10);
             this.buyCounter = buyCounter;
+            this.products = new List<Produkt>();
         }
 
         public override void readMessage(Message msg)
@@ -64,26 +68,35 @@ namespace Knoten
             if (products.Contains(current))
             {
                 //bereits gehört --> counter hochzählen
-                products[products.IndexOf(current)].buyCounter++;
+                products[products.IndexOf(current)].kaufCounter++;
                 checkKaufentscheidungForBuy(products[products.IndexOf(current)], msg);
+                Console.WriteLine("Buy nachricht erhalten und kenne das produkt schon; kaufcounter: " + products[products.IndexOf(current)].kaufCounter);
+            }
+            else
+            {
+                products.Add(current);
             }
         }
 
         private void checkKaufentscheidungForBuy(Produkt produkt, Message msg)
         {
-            if (produkt.kaufCounter > kaufheard && buyCounter > 0)
+            if (produkt.kaufCounter > kaufheard && buyCounter > produkt.buyCounter)
             {
                 //schicke nachricht an firma und nachbarn und zähle den buycounter hoch
                 BuyProduct(produkt, msg);
             }
             else
             {
-                Console.WriteLine("Buy Counter ist abgelaufen: " + buyCounter);
+                Console.WriteLine("--Buy Counter erreicht oder Schwelle nicht erreicht: ");
+                Console.WriteLine("Buycounter: " + buyCounter);
+                Console.WriteLine("ProduktBuycounter: " + produkt.buyCounter);
+                Console.WriteLine("Kaufschwelle fuer Buynachrichten: " + kaufheard);
             }
         }
 
         private void BuyProduct(Produkt produkt, Message msg)
         {
+            Console.WriteLine("Buy Produkt: " + produkt.produktName);
             produkt.buyCounter++;
             msg.typ = Message.BUY_MSG;
             msg.senderId = this.id;
@@ -95,11 +108,16 @@ namespace Knoten
                 }
             }
             msg.typ = Message.CONTROLL_MSG;
+
             msg.nachricht = "addme";
+            Console.WriteLine("Sende ADDME NACHRICHT!");
+            produkt.extractIdFromName();
             foreach (var bn in allNodes)
             {
-                if (bn.id == msg.extractIdFromName())
+                if (bn.id == produkt.id)
                 {
+                    
+                    //sende nachricht an firma die produkt verkauft
                     sendMessage(msg, bn);
                 }
             }
@@ -132,20 +150,29 @@ namespace Knoten
                 //bereits gehört --> counter hochzählen
                 products[products.IndexOf(current)].werbungCounter++;
                 checkKaufentscheidungForWerbung(products[products.IndexOf(current)], msg);
+                Console.WriteLine("Buy nachricht erhalten und kenne das produkt schon; kaufcounter: " + products[products.IndexOf(current)].werbungCounter);
+
+            }
+            else
+            {
+                products.Add(current);
             }
         }
 
         private void checkKaufentscheidungForWerbung(Produkt produkt, Message msg)
         {
             //checke ob die schwelle für das produkt erreicht ist 
-            if (produkt.werbungCounter > werbungheard && buyCounter > 0)
+            if (produkt.werbungCounter > werbungheard && buyCounter > produkt.werbungCounter)
             {
                 BuyProduct(produkt, msg);
             }
             else
             {
-                Console.WriteLine("Buy Counter ist abgelaufen: " + buyCounter);
-            }
+                Console.WriteLine("--Buy Counter ist abgelaufen oder Schwelle nicht erreicht: ");
+                Console.WriteLine("Buycounter: " + buyCounter);
+                Console.WriteLine("ProduktBuycounter: " + produkt.buyCounter); ;
+                Console.WriteLine("Kaufschwelle fuer Werbung: " + werbungheard);
+            } 
         }
         
         
@@ -163,7 +190,7 @@ namespace Knoten
             Console.WriteLine("Nachbaranzahl: " + neighBors.Count);
             foreach (var n in neighBors)
             {
-                Console.WriteLine(n.GetType());
+                Console.WriteLine(n.id + " " + n.GetType());
             }
             Console.WriteLine("*************!info******************");
         }
@@ -175,7 +202,7 @@ namespace Knoten
             Console.WriteLine("Produke gekauft: " + products.Count);
             foreach (var p in products)
             {
-                Console.WriteLine(p.produktName);
+                Console.WriteLine(p.produktName + " / gekauft: " + p.buyCounter + " / werbungheard: " + p.werbungCounter + " / kaufnachrichten: " + p.kaufCounter);
             }
             Console.WriteLine("************************************");
             Console.WriteLine("Nachbaranzahl: " + neighBors.Count);
