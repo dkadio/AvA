@@ -11,9 +11,9 @@ namespace Knoten
     {
         public String produktName;
         public int id;
-        public int kaufCounter;
-        public int werbungCounter;
-        public int buyCounter;
+        public int kaufCounter; // wie oft haben freunde das gekauft
+        public int werbungCounter; // wie oft hat man darüber werbung erhalten
+        public int buyCounter; // wie oft is das produkt wirklich gekauft worden
 
         public Produkt()
         {

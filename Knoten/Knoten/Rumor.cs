@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Knoten
 {
-    class Rumor : IEquatable<Rumor>
+    public class Rumor : IEquatable<Rumor>
     {
         public String rumor;
         public int counter;

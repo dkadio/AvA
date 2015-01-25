@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Knoten
 {
-    class BusinessNode : Knoten
+    class BusinessNode : Node
     {
         public Produkt produkt;
         public int etat;
@@ -20,6 +20,7 @@ namespace Knoten
             this.nodeTypeId = nodeTypeId;
             this.produkt = new Produkt("Produkt" + this.id, this.id);
             this.etat = new Random().Next(10, 15);
+            R = -1;
         }
 
         /*
@@ -31,6 +32,7 @@ namespace Knoten
             this.nodeTypeId = nodeTypeId;
             this.produkt = new Produkt("Produkt" + this.id, this.id);
             this.etat = new Random().Next(10, 20);
+            R = -1;
         }
 
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Knoten
 {
-    class CustomerNode : Knoten
+    class CustomerNode : Node
     {
         public List<Produkt> products;
         public int werbungheard;
@@ -70,7 +70,7 @@ namespace Knoten
                 //bereits gehört --> counter hochzählen
                 products[products.IndexOf(current)].kaufCounter++;
                 checkKaufentscheidungForBuy(products[products.IndexOf(current)], msg);
-                Console.WriteLine("Buy nachricht erhalten und kenne das produkt schon; kaufcounter: " + products[products.IndexOf(current)].kaufCounter);
+                Console.WriteLine("Buy nachricht erhalten und kenne das produkt schon; kaufcounter(Produkt gekauft): " + products[products.IndexOf(current)].kaufCounter);
             }
             else
             {
@@ -89,7 +89,7 @@ namespace Knoten
             {
                 Console.WriteLine("--Buy Counter erreicht oder Schwelle nicht erreicht: ");
                 Console.WriteLine("Buycounter: " + buyCounter);
-                Console.WriteLine("ProduktBuycounter: " + produkt.buyCounter);
+                Console.WriteLine("ProduktBuycounter(Produkt gekauft): " + produkt.buyCounter);
                 Console.WriteLine("Kaufschwelle fuer Buynachrichten: " + kaufheard);
             }
         }
@@ -170,7 +170,7 @@ namespace Knoten
             {
                 Console.WriteLine("--Buy Counter ist abgelaufen oder Schwelle nicht erreicht: ");
                 Console.WriteLine("Buycounter: " + buyCounter);
-                Console.WriteLine("ProduktBuycounter: " + produkt.buyCounter); ;
+                Console.WriteLine("ProduktBuycounter(Produkt gekauft): " + produkt.buyCounter); ;
                 Console.WriteLine("Kaufschwelle fuer Werbung: " + werbungheard);
             } 
         }

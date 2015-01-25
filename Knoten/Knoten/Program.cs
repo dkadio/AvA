@@ -33,7 +33,7 @@ namespace Knoten
                      int believeCounter = Convert.ToInt32(args[4]);
                      int neigborlimit = Convert.ToInt32(args[3]);
                  }
-                 Knoten k = new Knoten();
+                 Node k = new Node();
                  if (nodetype == "BID")
                  {
                       k = new BusinessNode(id, nodetype);

@@ -12,64 +12,70 @@ namespace Knoten
 {
     
 
-    class Knoten 
+    public class Node 
     {
         public int id { get; set; }
         public String ip { get; set; }
         public int port { get; set; }
-        public List<Knoten> allNodes { get; set; }   //are all information about the other nodes
-        public List<Knoten> neighBors { get; set; }
+        public List<Node> allNodes { get; set; }   //are all information about the other nodes
+        public List<Node> neighBors { get; set; }
         public Boolean end;
         public Boolean initator;
         public Boolean sendId;
         public List<Rumor> rumors;
         public String nodeTypeId;
-
-        public Knoten(int id, String ip, int port)
+        public volatile int  R;
+        public volatile int S;
+        public Node(int id, String ip, int port)
         {
             this.id = id;
             this.ip = ip;
             this.port = port;
-            allNodes = new List<Knoten>();
-            neighBors = new List<Knoten>();
+            allNodes = new List<Node>();
+            neighBors = new List<Node>();
             end = true;
             sendId = true;
             rumors = new List<Rumor>();
-
+            this.R = 0;
+            this.S = 0;
         }
 
-        public Knoten(int id, String ip, int port, String nodeTypeId)
+        public Node(int id, String ip, int port, String nodeTypeId)
         {
             this.nodeTypeId = nodeTypeId;
             this.id = id;
             this.ip = ip;
             this.port = port;
-            allNodes = new List<Knoten>();
-            neighBors = new List<Knoten>();
+            allNodes = new List<Node>();
+            neighBors = new List<Node>();
             end = true;
             sendId = true;
             rumors = new List<Rumor>();
-
+            this.R = 0;
+            this.S = 0;
         }
 
-        public Knoten()
+        public Node()
         {
-            allNodes = new List<Knoten>();
-            neighBors = new List<Knoten>();
+            allNodes = new List<Node>();
+            neighBors = new List<Node>();
             end = true;
             sendId = true;
             rumors = new List<Rumor>();
-
+            this.R = 0;
+            this.S = 0;
         }
 
-        public Knoten(int id)
+        public Node(int id)
         {
-            allNodes = new List<Knoten>();
-            neighBors = new List<Knoten>();
+            allNodes = new List<Node>();
+            neighBors = new List<Node>();
             this.id = id;
             end = true;
             sendId = true;
-            rumors = new List<Rumor>();
+            rumors = new List<Rumor>(); 
+            this.R = 0;
+            this.S = 0;
         }
 
 
@@ -162,6 +168,7 @@ namespace Knoten
          */
         public virtual void readMessage(Message msg)
         {
+            R++;
             Console.WriteLine("* Inc " + msg.typ + " MSG *****************************");
             Console.WriteLine("Received from " + msg.senderId + ": {0}", msg.nachricht + " at " + DateTime.Now);
 
@@ -265,6 +272,13 @@ namespace Knoten
                 case "id":
                     readIdFromNeighbor(msg);
                     break;
+                case "observe":
+                    //die von dem observer empfangenen und gsendeten nachrichten sollten nicht mitgezählt werden
+                    R--;
+                    msg.nachricht=S + ":" + R;
+                    sendMessage(msg, new Node(-2, "localhost", 6000));
+                    S--;
+                    break;
             }
         }
 
@@ -276,9 +290,9 @@ namespace Knoten
         /**
          * Sends a msg to a node
          */
-        public void sendMessage(Message msg, Knoten node)
+        public void sendMessage(Message msg, Node node)
         {
-
+            S++;
             if (sendId)
             {
                 sendId = false;
@@ -306,6 +320,7 @@ namespace Knoten
             catch (SocketException)
             {
                 Console.WriteLine(" At Sending the Msg: " + msg.nachricht + ", node " + node.id + " not available " + DateTime.Now);
+                S--;
             }
         }
 
@@ -354,7 +369,7 @@ namespace Knoten
                 else
                 {
                     Console.WriteLine("Normaler Knoten in " + filePath + " entdeckt");
-                    allNodes.Add(new Knoten(id, ip, port));
+                    allNodes.Add(new Node(id, ip, port));
                 }
                 counter++;
                 //Console.WriteLine(ip);
@@ -410,7 +425,7 @@ namespace Knoten
          //   for (var i = 0; i < neighBors.Count; i++)
              //Delete the older Items and add the new neighbors
            //     neighBors.Remove(neighBors[i]);
-            neighBors = new List<Knoten>();
+            neighBors = new List<Node>();
             string line;
             int counter = 0;
             // Read the file and display it line by line.
@@ -486,7 +501,7 @@ namespace Knoten
             if (d < 1)
             {
                 Console.WriteLine("neighbor number < 1 --> no neighbors");
-                neighBors = new List<Knoten>();
+                neighBors = new List<Node>();
             }
             else
             {

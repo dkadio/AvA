@@ -1,5 +1,5 @@
-1 localhost:5000 BID
-2 localhost:5001 CID
+1 localhost:5000 CID
+2 localhost:5001 BID
 3 localhost:5002 CID
-4 localhost:5003 CID
+4 localhost:5003 BID
 5 localhost:5004 CID
