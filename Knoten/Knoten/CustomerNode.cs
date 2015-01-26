@@ -12,15 +12,20 @@ namespace Knoten
         public int werbungheard;
         public int kaufheard;
         public int buyCounter;
-        
-        public CustomerNode(int id, String ip, int port, String nodeTypeId, int buyCounter) : base(id, ip, port)
+        public Node parent;
+        public int echoCounter;
+        public String max;
+
+        public CustomerNode(int id, String ip, int port, String nodeTypeId, int buyCounter)
+            : base(id, ip, port)
         {
             Random r = new Random();
             this.nodeTypeId = nodeTypeId;
             this.werbungheard = r.Next(0, 10);
-            this.kaufheard = r.Next(0,10);
+            this.kaufheard = r.Next(0, 10);
             this.buyCounter = buyCounter;
             this.products = new List<Produkt>();
+            echoCounter = 0;
         }
 
         public CustomerNode(int id, String ip, int port, String nodeTypeId)
@@ -32,7 +37,7 @@ namespace Knoten
             this.kaufheard = r.Next(0, 10);
             this.buyCounter = 0;
             this.products = new List<Produkt>();
-
+            echoCounter = 0;
         }
 
         public CustomerNode(int id, String nodeTypeId, int buyCounter)
@@ -44,6 +49,7 @@ namespace Knoten
             this.kaufheard = r.Next(0, 10);
             this.buyCounter = buyCounter;
             this.products = new List<Produkt>();
+            echoCounter = 0;
         }
 
         public override void readMessage(Message msg)
@@ -59,6 +65,68 @@ namespace Knoten
                     //ein anderer Knoten hat ein produkt gekauft
                     analyseBuyMsg(msg);
                     break;
+                case Message.EXPLORER_MSG:
+                    //merke dir von wem du die nachricht erhalten hast wenn es die erste ist
+
+                    checkParent(msg);
+                    
+                    echoBack(msg);
+                    break;
+                case Message.ECHO_MSG:
+                    checkParent(msg);
+                    echoBack(msg);
+
+                    break;
+            }
+        }
+
+        private void echoBack(Message msg)
+        {
+            max = max + msg.nachricht;
+            if (echoCounter == neighBors.Count)
+            {
+                
+                Console.WriteLine("---!!!Sende echo");
+                Console.WriteLine(max);
+                msg.typ = Message.ECHO_MSG;
+                msg.nachricht = max;
+                sendMessage(msg, parent);
+                Status = (int)Farbe.Gruen;
+            }
+        }
+
+        private void checkParent(Message msg)
+        {
+            Console.WriteLine("!!!Checkparent");
+            echoCounter++;
+            if (echoCounter == 1)
+            {
+                foreach (var node in allNodes)
+                {
+                    if (node.id == msg.senderId)
+                    {
+                        parent = node;
+                    }
+                }
+                Console.WriteLine("!!!my parent is: " + parent.id);
+                sendExplorer(msg);
+            }
+            Status = (int)Farbe.Rot;
+        }
+
+        private void sendExplorer(Message msg)
+        {
+
+            msg.typ = Message.EXPLORER_MSG;
+            msg.senderId = this.id;
+            msg.nachricht = msg.nachricht + ":" +this.id + ":";
+            foreach (var n in neighBors)
+            {
+                if (n.id != parent.id)
+                {
+                    sendMessage(msg, n);
+                }
+
             }
         }
 
@@ -116,7 +184,7 @@ namespace Knoten
             {
                 if (bn.id == produkt.id)
                 {
-                    
+
                     //sende nachricht an firma die produkt verkauft
                     sendMessage(msg, bn);
                 }
@@ -126,7 +194,7 @@ namespace Knoten
 
         private void addNewFriend()
         {
-            bool found =  true;
+            bool found = true;
             foreach (var nn in allNodes)
             {
                 if (!neighBors.Contains(nn) && nn.nodeTypeId == "CID" && found)
@@ -172,10 +240,10 @@ namespace Knoten
                 Console.WriteLine("Buycounter: " + buyCounter);
                 Console.WriteLine("ProduktBuycounter(Produkt gekauft): " + produkt.buyCounter); ;
                 Console.WriteLine("Kaufschwelle fuer Werbung: " + werbungheard);
-            } 
+            }
         }
-        
-        
+
+
         public override void printid()
         {
             Console.WriteLine("CustomerKnoten");

@@ -26,6 +26,9 @@ namespace Knoten
         public String nodeTypeId;
         public volatile int  R;
         public volatile int S;
+        public int Status;
+        public enum Farbe { Weiss = 0, Rot = 1, Gruen = 2 }
+
         public Node(int id, String ip, int port)
         {
             this.id = id;
@@ -38,6 +41,7 @@ namespace Knoten
             rumors = new List<Rumor>();
             this.R = 0;
             this.S = 0;
+            Status = (int)Farbe.Weiss;
         }
 
         public Node(int id, String ip, int port, String nodeTypeId)
@@ -53,6 +57,7 @@ namespace Knoten
             rumors = new List<Rumor>();
             this.R = 0;
             this.S = 0;
+            Status = (int)Farbe.Weiss;
         }
 
         public Node()
@@ -64,6 +69,7 @@ namespace Knoten
             rumors = new List<Rumor>();
             this.R = 0;
             this.S = 0;
+            Status = (int)Farbe.Weiss;
         }
 
         public Node(int id)
@@ -76,6 +82,7 @@ namespace Knoten
             rumors = new List<Rumor>(); 
             this.R = 0;
             this.S = 0;
+            Status = (int)Farbe.Weiss;
         }
 
 
@@ -296,7 +303,7 @@ namespace Knoten
             if (sendId)
             {
                 sendId = false;
-                sendIdTo();
+               // sendIdTo();
 
             }
             try

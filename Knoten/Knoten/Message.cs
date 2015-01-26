@@ -16,6 +16,8 @@ namespace Knoten
         public const String NORMAL_MSG = "msg";
         public const String CAMPAIGN_MSG = "campaign";
         public const String BUY_MSG = "buy";
+        public const String EXPLORER_MSG = "explorer";
+        public const String ECHO_MSG = "echo";
 
 
 

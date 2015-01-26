@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Knoten
 {
@@ -10,6 +12,7 @@ namespace Knoten
     {
         public Produkt produkt;
         public int etat;
+        public int echoCounter;
 
         /*
          * Erstellt einen neuen Businesskniten und initialisiert sein Produkt 
@@ -21,6 +24,7 @@ namespace Knoten
             this.produkt = new Produkt("Produkt" + this.id, this.id);
             this.etat = new Random().Next(10, 15);
             R = -1;
+            echoCounter = 0;
         }
 
         /*
@@ -33,11 +37,13 @@ namespace Knoten
             this.produkt = new Produkt("Produkt" + this.id, this.id);
             this.etat = new Random().Next(10, 20);
             R = -1;
+            echoCounter = 0;
         }
 
 
         public void startKampagne()
         {
+            echo();
             while (etat > 0)
             {
                 Console.WriteLine("Starte Kampagne, etat: " + etat);
@@ -54,6 +60,22 @@ namespace Knoten
             }
         }
 
+        /**
+         * Echo algo init
+         */
+        private void echo()
+        {
+            Status = (int)Farbe.Rot;
+            Message msg = new Message(this.id, this.id.ToString(), Message.EXPLORER_MSG);
+            foreach (var n in neighBors)
+            {
+                sendMessage(msg, n);
+            }
+        }
+
+
+
+
         public override void readMessage(Message msg)
         {
             base.readMessage(msg);
@@ -63,6 +85,22 @@ namespace Knoten
                 case Message.CAMPAIGN_MSG:
 
                     break;
+                case Message.EXPLORER_MSG:
+                    checkEcho();
+                    break;
+                case Message.ECHO_MSG:
+                    checkEcho();
+                    break;
+            }
+        }
+
+        private void checkEcho()
+        {
+            echoCounter++;
+            Console.WriteLine("!!Explorer MSG EC: " + echoCounter);
+            if (echoCounter == neighBors.Count)
+            {
+                Console.WriteLine("Alle haben echo erhalten");
             }
         }
 
@@ -77,6 +115,9 @@ namespace Knoten
                 case "init":
                     //if init -> start kampagne
                     startKampagne();
+                    break;
+                case "echo":
+                    echo();
                     break;
             }
 
@@ -96,7 +137,7 @@ namespace Knoten
                     }
                 }
             }
-            
+
             startKampagne();
         }
 
