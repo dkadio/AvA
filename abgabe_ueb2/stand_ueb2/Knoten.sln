@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Knoten", "Knoten\Knoten.csproj", "{4459B0A3-4366-4282-B647-82EB55C8AA44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphgen", "Graphgen\Graphgen.csproj", "{E4F213EE-9743-4674-BA2C-2D9971D8608E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steuerung", "Steuerung\Steuerung.csproj", "{A1200CFD-C6DE-4CAE-9793-04EC5719705A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exe", "Exe", "{E37B0184-717D-4B9A-AEA2-A4C7C9191B46}"
+	ProjectSection(SolutionItems) = preProject
+		Graphgen\bin\Debug\Graphgen.exe = Graphgen\bin\Debug\Graphgen.exe
+		Knoten\bin\Debug\Knoten.exe = Knoten\bin\Debug\Knoten.exe
+		Steuerung\bin\Debug\Steuerung.exe = Steuerung\bin\Debug\Steuerung.exe
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenHelper", "GenHelper\GenHelper.csproj", "{59B2C141-F04D-4D45-A9D1-9A6B6D365F93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer", "Observer\Observer.csproj", "{FA58C8C7-AE63-4524-8ADD-3959DBB48146}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4459B0A3-4366-4282-B647-82EB55C8AA44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4459B0A3-4366-4282-B647-82EB55C8AA44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4459B0A3-4366-4282-B647-82EB55C8AA44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4459B0A3-4366-4282-B647-82EB55C8AA44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4F213EE-9743-4674-BA2C-2D9971D8608E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4F213EE-9743-4674-BA2C-2D9971D8608E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4F213EE-9743-4674-BA2C-2D9971D8608E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4F213EE-9743-4674-BA2C-2D9971D8608E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1200CFD-C6DE-4CAE-9793-04EC5719705A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1200CFD-C6DE-4CAE-9793-04EC5719705A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1200CFD-C6DE-4CAE-9793-04EC5719705A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1200CFD-C6DE-4CAE-9793-04EC5719705A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59B2C141-F04D-4D45-A9D1-9A6B6D365F93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59B2C141-F04D-4D45-A9D1-9A6B6D365F93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59B2C141-F04D-4D45-A9D1-9A6B6D365F93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59B2C141-F04D-4D45-A9D1-9A6B6D365F93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA58C8C7-AE63-4524-8ADD-3959DBB48146}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA58C8C7-AE63-4524-8ADD-3959DBB48146}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA58C8C7-AE63-4524-8ADD-3959DBB48146}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA58C8C7-AE63-4524-8ADD-3959DBB48146}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
