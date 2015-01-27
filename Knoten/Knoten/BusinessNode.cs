@@ -13,7 +13,8 @@ namespace Knoten
         public Produkt produkt;
         public int etat;
         public int echoCounter;
-
+        public int max;
+        public bool echoInit;
         /*
          * Erstellt einen neuen Businesskniten und initialisiert sein Produkt 
          */
@@ -25,6 +26,7 @@ namespace Knoten
             this.etat = new Random().Next(10, 15);
             R = -1;
             echoCounter = 0;
+            echoInit = false;
         }
 
         /*
@@ -38,12 +40,15 @@ namespace Knoten
             this.etat = new Random().Next(10, 20);
             R = -1;
             echoCounter = 0;
+            echoInit = false;
         }
 
 
         public void startKampagne()
         {
+            echoInit = true;
             echo();
+
             while (etat > 0)
             {
                 Console.WriteLine("Starte Kampagne, etat: " + etat);
@@ -66,7 +71,7 @@ namespace Knoten
         private void echo()
         {
             Status = (int)Farbe.Rot;
-            Message msg = new Message(this.id, this.id.ToString(), Message.EXPLORER_MSG);
+            Message msg = new Message(this.id, Message.EXPLORER_MSG, Message.EXPLORER_MSG);
             foreach (var n in neighBors)
             {
                 sendMessage(msg, n);
@@ -86,21 +91,57 @@ namespace Knoten
 
                     break;
                 case Message.EXPLORER_MSG:
-                    checkEcho();
+                    if (echoInit)
+                    {
+                        checkEcho(msg);
+                    }
+                    else
+                    {
+                        sendEmptyEcho(msg);
+                    }
                     break;
                 case Message.ECHO_MSG:
-                    checkEcho();
+                    if (echoInit)
+                    {
+                        checkEcho(msg);
+                    }
+                    else
+                    {
+                        sendEmptyEcho(msg);
+                    }
                     break;
             }
         }
 
-        private void checkEcho()
+        private void sendEmptyEcho(Message msg)
+        {
+            msg.typ = Message.ECHO_MSG;
+            msg.nachricht = "0";
+            
+            foreach(var n in neighBors){
+                if (n.id == msg.senderId)
+                {
+                    msg.senderId = this.id;
+                    sendMessage(msg, n);
+                }
+            }
+            echoCounter = 0;
+            Status = (int)Farbe.Weiss;
+        }
+
+        private void checkEcho(Message msg)
         {
             echoCounter++;
-            Console.WriteLine("!!Explorer MSG EC: " + echoCounter);
+            Console.WriteLine("!!Explorer MSG EC, echos erhalten: " + echoCounter);
             if (echoCounter == neighBors.Count)
             {
-                Console.WriteLine("Alle haben echo erhalten");
+                Console.WriteLine("Alle haben echo erhalten: " + msg.nachricht);
+                echoInit = false;
+                echoCounter = 0;
+            }
+            if (msg.typ == Message.ECHO_MSG)
+            {
+                max = max + Convert.ToInt32(msg.nachricht);
             }
         }
 
@@ -117,6 +158,7 @@ namespace Knoten
                     startKampagne();
                     break;
                 case "echo":
+                    echoInit = true;
                     echo();
                     break;
             }

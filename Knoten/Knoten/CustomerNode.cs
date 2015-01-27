@@ -14,7 +14,7 @@ namespace Knoten
         public int buyCounter;
         public Node parent;
         public int echoCounter;
-        public String max;
+        public int max;
 
         public CustomerNode(int id, String ip, int port, String nodeTypeId, int buyCounter)
             : base(id, ip, port)
@@ -69,10 +69,11 @@ namespace Knoten
                     //merke dir von wem du die nachricht erhalten hast wenn es die erste ist
 
                     checkParent(msg);
-                    
+
                     echoBack(msg);
                     break;
                 case Message.ECHO_MSG:
+                    checkEcho(msg);
                     checkParent(msg);
                     echoBack(msg);
 
@@ -80,18 +81,24 @@ namespace Knoten
             }
         }
 
+        private void checkEcho(Message msg)
+        {
+            max = max + Convert.ToInt32(msg.nachricht);
+        }
+
         private void echoBack(Message msg)
         {
-            max = max + msg.nachricht;
             if (echoCounter == neighBors.Count)
             {
-                
+
                 Console.WriteLine("---!!!Sende echo");
                 Console.WriteLine(max);
                 msg.typ = Message.ECHO_MSG;
-                msg.nachricht = max;
+                msg.nachricht = (max + 1).ToString();
                 sendMessage(msg, parent);
-                Status = (int)Farbe.Gruen;
+                Status = (int)Farbe.Weiss;
+                echoCounter = 0;
+                max = 0;
             }
         }
 
@@ -109,9 +116,14 @@ namespace Knoten
                     }
                 }
                 Console.WriteLine("!!!my parent is: " + parent.id);
-                sendExplorer(msg);
+                if ((int)Farbe.Weiss == Status)
+                {
+                    sendExplorer(msg);
+                    Status = (int)Farbe.Rot;
+
+                }
             }
-            Status = (int)Farbe.Rot;
+
         }
 
         private void sendExplorer(Message msg)
@@ -119,7 +131,6 @@ namespace Knoten
 
             msg.typ = Message.EXPLORER_MSG;
             msg.senderId = this.id;
-            msg.nachricht = msg.nachricht + ":" +this.id + ":";
             foreach (var n in neighBors)
             {
                 if (n.id != parent.id)
