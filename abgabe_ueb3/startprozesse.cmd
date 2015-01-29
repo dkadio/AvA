@@ -1,0 +1,1 @@
+FOR /L %%i in (1, 1, %1) do Start Deadlock.exe filea.txt fileb.txt

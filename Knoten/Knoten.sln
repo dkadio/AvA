@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer", "Observer\Observ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deadlock", "Deadlock\Deadlock.csproj", "{FB09D981-AE97-4771-A01D-6B043D1F45E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deadlockverwaltung", "Deadlockverwaltung\Deadlockverwaltung.csproj", "{34FF0DBB-6B9C-4C4E-9724-7AB49687B2D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{FB09D981-AE97-4771-A01D-6B043D1F45E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB09D981-AE97-4771-A01D-6B043D1F45E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB09D981-AE97-4771-A01D-6B043D1F45E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34FF0DBB-6B9C-4C4E-9724-7AB49687B2D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34FF0DBB-6B9C-4C4E-9724-7AB49687B2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34FF0DBB-6B9C-4C4E-9724-7AB49687B2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34FF0DBB-6B9C-4C4E-9724-7AB49687B2D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

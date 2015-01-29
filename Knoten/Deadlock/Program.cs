@@ -10,21 +10,85 @@ namespace Deadlock
     {
         static void Main(string[] args)
         {
-            int pid = Process.GetCurrentProcess().Id % 3;
-            if (pid == 0)
+            bool schreibrechta = false;
+            bool schreibrechtb = false;
+            if (args.Length != 2)
             {
-                //starte mit File B
-                Console.WriteLine("B");
-                ClientProzess cp = new ClientProzess("b", "a");
+                Console.WriteLine(".exe filea fileb");
             }
             else
             {
-                //starte mit File A
-                Console.WriteLine("A");
-                ClientProzess cp = new ClientProzess("a", "b");
+                ClientProzess cp = new ClientProzess(args[0], args[1]);
+                int pid = Process.GetCurrentProcess().Id % 2;
+                int i = 0;
+
+                if (pid == 1)
+                {
+
+                    Console.WriteLine("Ich bin ungerader Prozess");
+                    while (i < 100)
+                    {
+                        //starte mit File B
+                        if (!schreibrechta)
+                        {
+                            schreibrechta = cp.schreibRechtAnfordern(cp.fileA);
+                        }
+                        if (!schreibrechtb)
+                        {
+                            schreibrechtb = cp.schreibRechtAnfordern(cp.fileB);
+                        }
+
+
+                        //wenn ich beide schreibrechte habe dann mache mit dem nächsten schritt weiter
+                        if (schreibrechta && schreibrechtb)
+                        {
+                            cp.inkrementFile(cp.fileA);
+                            cp.dekrementFile(cp.fileB);
+                            cp.changeFileName();
+                            schreibrechta = cp.schreibRechtAufgaben(cp.fileA);
+                            schreibrechtb = cp.schreibRechtAufgaben(cp.fileB);
+                        }
+
+
+                        i++;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Ich bin gerader Prozess");
+
+                    while (i < 100)
+                    {
+
+                        //starte mit File A
+                        if (!schreibrechtb)
+                        {
+                            schreibrechtb = cp.schreibRechtAnfordern(cp.fileB);
+                        }
+                        if (!schreibrechta)
+                        {
+                            schreibrechta = cp.schreibRechtAnfordern(cp.fileA);
+                        }
+
+
+                        //wenn ich beide schreibrechte habe dann mache mit dem nächsten schritt weiter
+                        if (schreibrechta && schreibrechtb)
+                        {
+                            cp.inkrementFile(cp.fileA);
+                            cp.dekrementFile(cp.fileB);
+                            cp.changeFileName();
+                            schreibrechta = cp.schreibRechtAufgaben(cp.fileA);
+                            schreibrechtb = cp.schreibRechtAufgaben(cp.fileB);
+                        }
+
+
+                        i++;
+                    }
+                }
+
             }
             Console.ReadLine();
-            
+
         }
     }
 }
