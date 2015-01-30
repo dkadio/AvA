@@ -12,32 +12,35 @@ namespace Deadlock
         {
             bool schreibrechta = false;
             bool schreibrechtb = false;
-            if (args.Length != 2)
+            if (args.Length != 2 && false)
             {
                 Console.WriteLine(".exe filea fileb");
             }
             else
             {
-                ClientProzess cp = new ClientProzess(args[0], args[1]);
-                int pid = Process.GetCurrentProcess().Id % 2;
+                ClientProzess cp = new ClientProzess(args[0], args[1], Convert.ToInt32(args[2]));
+                int pid = Convert.ToInt32(args[2])%2;//Process.GetCurrentProcess().Id % 2;
                 int i = 0;
 
                 if (pid == 1)
                 {
-
+                    cp.resource.listener.Server.ReceiveTimeout = cp.resource.port-3000;
                     Console.WriteLine("Ich bin ungerader Prozess");
                     while (i < 100)
                     {
-                        //starte mit File B
+                        //starte mit File A
                         if (!schreibrechta)
                         {
                             schreibrechta = cp.schreibRechtAnfordern(cp.fileA);
-                        }
-                        if (!schreibrechtb)
+                        }              
+                        if (schreibrechta)
                         {
                             schreibrechtb = cp.schreibRechtAnfordern(cp.fileB);
+                            if (!schreibrechtb)
+                            {
+                                //habe ctrl msg bekommen checke ob ich im deadlock bin
+                            }
                         }
-
 
                         //wenn ich beide schreibrechte habe dann mache mit dem nächsten schritt weiter
                         if (schreibrechta && schreibrechtb)
@@ -45,8 +48,8 @@ namespace Deadlock
                             cp.inkrementFile(cp.fileA);
                             cp.dekrementFile(cp.fileB);
                             cp.changeFileName();
-                            schreibrechta = cp.schreibRechtAufgaben(cp.fileA);
-                            schreibrechtb = cp.schreibRechtAufgaben(cp.fileB);
+                            schreibrechta = !cp.schreibRechtAufgaben(cp.fileA);
+                            schreibrechtb = !cp.schreibRechtAufgaben(cp.fileB);
                         }
 
 
@@ -56,16 +59,16 @@ namespace Deadlock
                 else
                 {
                     Console.WriteLine("Ich bin gerader Prozess");
-
+                    cp.resource.listener.Server.ReceiveTimeout = cp.resource.port - 1000;
                     while (i < 100)
                     {
 
-                        //starte mit File A
+                        //starte mit File B
                         if (!schreibrechtb)
                         {
                             schreibrechtb = cp.schreibRechtAnfordern(cp.fileB);
                         }
-                        if (!schreibrechta)
+                        if (schreibrechtb)
                         {
                             schreibrechta = cp.schreibRechtAnfordern(cp.fileA);
                         }
@@ -77,8 +80,8 @@ namespace Deadlock
                             cp.inkrementFile(cp.fileA);
                             cp.dekrementFile(cp.fileB);
                             cp.changeFileName();
-                            schreibrechta = cp.schreibRechtAufgaben(cp.fileA);
-                            schreibrechtb = cp.schreibRechtAufgaben(cp.fileB);
+                            schreibrechta = !cp.schreibRechtAufgaben(cp.fileA);
+                            schreibrechtb = !cp.schreibRechtAufgaben(cp.fileB);
                         }
 
 

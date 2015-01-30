@@ -5,133 +5,87 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-
+using Deadlock;
 namespace Deadlockverwaltung
 {
     class Verwaltung
     {
         int port;
         String fileName;
-        bool schreibrecht;
+        bool schreibrechtFrei;
         int counter;
+        Resource resource;
+        List<int> portList;
+        List<Message> requests;
 
-        public Verwaltung(int port, String file){
+        public Verwaltung(int port, String file)
+        {
             this.port = port;
             fileName = file;
-            schreibrecht = true;
+            schreibrechtFrei = true;
             counter = 0;
+            resource = new Resource(port);
+            portList = resource.getPortList("portlist.txt");
+            requests = new List<Message>();
         }
 
 
         public void ListenForRequest()
         {
-
-            //Maybe use newer version
-            TcpListener listener = new TcpListener(port);
-
-            try
+            while (true)
             {
-
-                // Start listening for client requests.
-                listener.Start();
-
-                // Buffer for reading data
-                Byte[] bytes = new Byte[256];
-                String data = null;
-                int i;
-                // Enter the listening loop.
-                while (true)
-                {
-                    Console.Write(Environment.NewLine + "Waiting for a connection... " + counter + Environment.NewLine);
-
-                    // Perform a blocking call to accept requests.
-                    // You could also user server.AcceptSocket() here.
-                    TcpClient client = listener.AcceptTcpClient();
-                   // Console.WriteLine("Connected!");
-
-                    data = null;
-
-                    // Get a stream object for reading and writing
-                    NetworkStream stream = client.GetStream();
-
-                    // Loop to receive all the data sent by the client.
-
-                    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                    {
-                        // Translate data bytes to a ASCII string.
-                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        //Console.WriteLine("*********new MSG*******");
-                        //Console.WriteLine("Received " + DateTime.Now + ": {0}", data);
-                       
-                        // read the received Data and check if is a controll or a normal msg
-                          byte[] msg = System.Text.Encoding.ASCII.GetBytes(checkPermission(data));
-
-                        // Send back a response.
-                            stream.Write(msg, 0, msg.Length);
-                        //   Console.WriteLine("Sent " + DateTime.Now + ":{0}", data);
-
-                    }
-                    
-                    // Shutdown and end connection
-                    client.Close();
-
-                }
-
-                
-
-            }
-            catch (System.IO.IOException)
-            {
-                Console.WriteLine("Client hat unerwartet beendet");
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
-            }
-            finally
-            {
-                // Stop listening for new clients.
-                listener.Stop();
+                Message msg = resource.Listen();
+                checkPermission(msg);
             }
 
-        
         }
 
-        private string checkPermission(string data)
+        private void checkPermission(Message msg)
         {
-            if (data == fileName)
+            switch (msg.typ)
             {
-                //fordert schreibrecht an
-                if (schreibrecht)
-                {
-                    Console.WriteLine("Gewähre schreibrecht");
-                    counter++;
-                    schreibrecht = false;
-                    return "true";
-                }
-                else
-                {
-                    Console.WriteLine("verbiete schreibrecht");
-                    return "false";
-                }
-                
+                case Message.RELEASE_FILE:
+                    //prozess will schreibrecht aufloesen
+                    Console.WriteLine("Schreibrecht wurde aufgeloest" + Environment.NewLine);
+                    msg.typ = Message.RELEASED_FILE;
+                    resource.Connect(Resource.HOST, msg.senderId, msg);
+                    schreibrechtFrei = true;
+                    if (requests.Count > 0)
+                    {
+                        grantMessage(msg);
+                    }
+                    break;
+                case Message.REQUEST_FILE:
+                    //prozess will schreibrecht anfrodern
+                    requests.Add(msg);
+                    Console.WriteLine("Adde Prozess zur queue: " + msg.senderId + " gr: " + requests.Count + Environment.NewLine);
+                    if (schreibrechtFrei)
+                    {
+                        grantMessage(msg);
+                    }
+                    break;
+                case Message.RENOUNCE_FILE:
+                    //prozess verzichtet auf seine schreibrechte
+                    Console.WriteLine("Auf schreibrecht wurde verzichtet: " + msg.senderId + Environment.NewLine);
+                    requests.Remove(msg);
+                    msg.typ = Message.RENOUNCE_FILE_OK;
+                    resource.Connect(Resource.HOST, msg.senderId, msg);
+                    break;
             }
-            else if (data == fileName + ":not")
-            {
-                //will schreibrechte auflösen
-                if (!schreibrecht)
-                {
-                    Console.WriteLine("Löse schreibrecht auf");
-                    schreibrecht = true;
-                    return "false";
-                }
-                else
-                {
-                    Console.WriteLine("Löse schreibrecht nicht auf");
-                    return "true";
-                }
-            }
-            return "default";
+        }
+
+        private void grantMessage(Message msg)
+        {
+            requests[0].typ = Message.GRANTED_FILE;
+            resource.Connect(Resource.HOST, requests[0].senderId, requests[0]);
+            requests.Remove(msg);
+            Console.WriteLine("Arbeite queue ab: " + msg.senderId + " gr: " + requests.Count + Environment.NewLine);
+            schreibrechtFrei = false;
+        }
+
+        internal void initFile()
+        {
+            //ueberschreib den inhalt der datei mit 000000
         }
     }
 }
