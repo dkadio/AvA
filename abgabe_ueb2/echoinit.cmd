@@ -1,0 +1,1 @@
+FOR /F "tokens=3,4 delims=: " %%G IN (test.txt) DO IF "%%H" == "BID" (Steuerung.exe ctrl echo %%G)
