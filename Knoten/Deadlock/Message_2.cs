@@ -11,6 +11,7 @@ namespace Deadlock
         public int senderId;
         public String nachricht;
         public String typ;
+        public int prozessId;
         public const String CONTROLL_MSG = "ctrl";
         public const String NORMAL_MSG = "msg";
         public const String CAMPAIGN_MSG = "campaign";
@@ -23,7 +24,7 @@ namespace Deadlock
         public const String RELEASED_FILE = "released.file"; //answ for realease
         public const String RENOUNCE_FILE = "renounce.file"; // auf schreibrecht verzichten
         public const String RENOUNCE_FILE_OK = "renounce.file.ok"; //bestätigung auf verzicht 
-
+        public const String REFUSAL_FILE = "REFUSAL.file"; //absage eines rechtes
 
 
         public Message(int senderId, String nachricht, String typ)

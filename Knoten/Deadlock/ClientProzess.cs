@@ -67,12 +67,20 @@ namespace Deadlock
                     //habe kontrollnachricht erhalten --> edge chasing
                     //prüfe ob ich deadlock bin wenn ja verzichte auf schreibrecht wenn nein return true(behalte weiterhin schreibrechte)
                     //sende release msg --> lande in renounce wenn das geklappt hat 
-                    
+
+                    //gib hier die schreibrecht auf wenn du eine solche nachricht bekommst
                     return false;
                 case Message.RENOUNCE_FILE_OK:
                     //hier sollte ich landen wenn ich auf schreibrecht verzichtet habe
                     Console.WriteLine("schreibrecht verzichtet" + Environment.NewLine);
 
+                    return false;
+                case Message.REFUSAL_FILE:
+                    //frag den prozess der die schreibrechte hat ob er sie aufgeben will
+                    Console.WriteLine("Keien schreibrechte erhalten da prozess blockiert: " + msg.prozessId);
+                    msg.typ = Message.CONTROLL_MSG;
+                    msg.senderId = resource.port;
+                    resource.Connect(Resource.HOST, msg.prozessId, msg);
                     return false;
                    
             }

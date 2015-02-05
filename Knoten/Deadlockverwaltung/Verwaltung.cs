@@ -17,6 +17,7 @@ namespace Deadlockverwaltung
         Resource resource;
         List<int> portList;
         List<Message> requests;
+        int assignedProcess;
 
         public Verwaltung(int port, String file)
         {
@@ -57,30 +58,46 @@ namespace Deadlockverwaltung
                     break;
                 case Message.REQUEST_FILE:
                     //prozess will schreibrecht anfrodern
-                    requests.Add(msg);
+                    //requests.Add(msg);
                     Console.WriteLine("Adde Prozess zur queue: " + msg.senderId + " gr: " + requests.Count + Environment.NewLine);
                     if (schreibrechtFrei)
                     {
                         grantMessage(msg);
                     }
+                    else
+                    {
+                        refusalMessage(msg);
+                    }
                     break;
                 case Message.RENOUNCE_FILE:
                     //prozess verzichtet auf seine schreibrechte
                     Console.WriteLine("Auf schreibrecht wurde verzichtet: " + msg.senderId + Environment.NewLine);
-                    requests.Remove(msg);
+                    //requests.Remove(msg);
                     msg.typ = Message.RENOUNCE_FILE_OK;
                     resource.Connect(Resource.HOST, msg.senderId, msg);
                     break;
             }
         }
 
+        private void refusalMessage(Message msg)
+        {
+            msg.typ = Message.REFUSAL_FILE;
+            msg.prozessId = assignedProcess;
+            resource.Connect(Resource.HOST, msg.senderId, msg);
+        }
+
         private void grantMessage(Message msg)
         {
-            requests[0].typ = Message.GRANTED_FILE;
-            resource.Connect(Resource.HOST, requests[0].senderId, requests[0]);
-            requests.Remove(msg);
-            Console.WriteLine("Arbeite queue ab: " + msg.senderId + " gr: " + requests.Count + Environment.NewLine);
+            //requests[0].typ = Message.GRANTED_FILE;
+            //resource.Connect(Resource.HOST, requests[0].senderId, requests[0]);
+            msg.typ = Message.GRANTED_FILE;
+            resource.Connect(Resource.HOST, msg.senderId, msg);
+
+           // requests.Remove(msg);
+            //Console.WriteLine("Arbeite queue ab: " + msg.senderId + " gr: " + requests.Count + Environment.NewLine);
+            Console.WriteLine("Gewaehre schreibrechte für " + msg.senderId + Environment.NewLine);
             schreibrechtFrei = false;
+            assignedProcess = msg.senderId; //hier sollte eig die prozessnuzmemr stehen
         }
 
         internal void initFile()
