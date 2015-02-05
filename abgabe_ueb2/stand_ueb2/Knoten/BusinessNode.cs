@@ -91,14 +91,14 @@ namespace Knoten
 
                     break;
                 case Message.EXPLORER_MSG:
-                    if (echoInit)
-                    {
-                        checkEcho(msg);
-                    }
-                    else
-                    {
+                   // if (echoInit)
+                   // {
+                      //  checkEcho(msg);
+                   // }
+                  //  else
+                 //   {
                         sendEmptyEcho(msg);
-                    }
+                    //}
                     break;
                 case Message.ECHO_MSG:
                     if (echoInit)
@@ -132,17 +132,18 @@ namespace Knoten
         private void checkEcho(Message msg)
         {
             echoCounter++;
-            Console.WriteLine("!!Explorer MSG EC, echos erhalten: " + echoCounter);
+            max = max + Convert.ToInt32(msg.nachricht);
+            Console.WriteLine("!!Explorer MSG EC, echos erhalten: " + echoCounter+ "/" + neighBors.Count);
+            Console.WriteLine(max);
+
             if (echoCounter == neighBors.Count)
             {
-                Console.WriteLine("Alle haben echo erhalten: " + msg.nachricht);
+                Console.WriteLine("Alle haben echo erhalten: " + max + " Werden erreicht");
                 echoInit = false;
                 echoCounter = 0;
+                max = 0;
             }
-            if (msg.typ == Message.ECHO_MSG)
-            {
-                max = max + Convert.ToInt32(msg.nachricht);
-            }
+
         }
 
         public override void ctrlMsg(Message msg)
