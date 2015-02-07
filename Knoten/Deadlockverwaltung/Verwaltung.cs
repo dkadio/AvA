@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Deadlock;
+using System.IO;
 namespace Deadlockverwaltung
 {
     class Verwaltung
@@ -59,13 +60,15 @@ namespace Deadlockverwaltung
                 case Message.REQUEST_FILE:
                     //prozess will schreibrecht anfrodern
                     //requests.Add(msg);
-                    Console.WriteLine("Adde Prozess zur queue: " + msg.senderId + " gr: " + requests.Count + Environment.NewLine);
+                    Console.WriteLine("schreibrecht wird angefordert von " + msg.senderId + " für: " + msg.nachricht + Environment.NewLine);
                     if (schreibrechtFrei)
                     {
+                        Console.WriteLine("gewähre schreibrecht");
                         grantMessage(msg);
                     }
                     else
                     {
+                        Console.WriteLine("gewähre kein schreibrecht");
                         refusalMessage(msg);
                     }
                     break;
@@ -103,6 +106,9 @@ namespace Deadlockverwaltung
         internal void initFile()
         {
             //ueberschreib den inhalt der datei mit 000000
+            StreamWriter sw = new StreamWriter(fileName);
+            sw.WriteLine("000000");
+            sw.Close();
         }
     }
 }
