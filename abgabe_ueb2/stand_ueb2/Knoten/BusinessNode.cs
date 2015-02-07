@@ -47,7 +47,7 @@ namespace Knoten
         public void startKampagne()
         {
             echoInit = true;
-            echo();
+           // echo();
 
             while (etat > 0)
             {
@@ -97,18 +97,18 @@ namespace Knoten
                    // }
                   //  else
                  //   {
-                        sendEmptyEcho(msg);
+                       // sendEmptyEcho(msg);
                     //}
                     break;
                 case Message.ECHO_MSG:
-                    if (echoInit)
-                    {
+                    //if (echoInit)
+                    //{
                         checkEcho(msg);
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
                         sendEmptyEcho(msg);
-                    }
+                   // }
                     break;
             }
         }
@@ -133,15 +133,16 @@ namespace Knoten
         {
             echoCounter++;
             max = max + Convert.ToInt32(msg.nachricht);
-            Console.WriteLine("!!Explorer MSG EC, echos erhalten: " + echoCounter+ "/" + neighBors.Count);
+            Console.WriteLine("!!Explorer MSG EC, echos erhalten: " + echoCounter + "/" + echoNeighbors.Count);
             Console.WriteLine(max);
 
-            if (echoCounter == neighBors.Count)
+            if (echoCounter == echoNeighbors.Count)
             {
                 Console.WriteLine("Alle haben echo erhalten: " + max + " Werden erreicht");
                 echoInit = false;
                 echoCounter = 0;
                 max = 0;
+                startKampagne();
             }
 
         }
@@ -153,14 +154,19 @@ namespace Knoten
             {
                 case "addme":
                     addNodeToNeighbors(msg);
+                    echo();
                     break;
                 case "init":
                     //if init -> start kampagne
-                    startKampagne();
+                    //startKampagne();
+                    echo();
                     break;
                 case "echo":
                     echoInit = true;
                     echo();
+                    break;
+                case "kam":
+                    startKampagne();
                     break;
             }
 
@@ -180,8 +186,6 @@ namespace Knoten
                     }
                 }
             }
-
-            startKampagne();
         }
 
         /**
@@ -201,6 +205,11 @@ namespace Knoten
             foreach (var n in neighBors)
             {
                 Console.WriteLine(n.id + " " + n.GetType());
+            }
+            Console.WriteLine("EChoNachbarn: " + echoNeighbors.Count);
+            foreach (var n in echoNeighbors)
+            {
+                Console.WriteLine(n.GetType());
             }
             Console.WriteLine("*************!info******************");
         }

@@ -28,6 +28,7 @@ namespace Knoten
         public volatile int S;
         public int Status;
         public enum Farbe { Weiss = 0, Rot = 1, Gruen = 2 }
+        public List<Node> echoNeighbors;
 
         public Node(int id, String ip, int port)
         {
@@ -42,6 +43,7 @@ namespace Knoten
             this.R = 0;
             this.S = 0;
             Status = (int)Farbe.Weiss;
+            echoNeighbors = new List<Node>();
         }
 
         public Node(int id, String ip, int port, String nodeTypeId)
@@ -58,6 +60,7 @@ namespace Knoten
             this.R = 0;
             this.S = 0;
             Status = (int)Farbe.Weiss;
+            echoNeighbors = new List<Node>();
         }
 
         public Node()
@@ -70,6 +73,7 @@ namespace Knoten
             this.R = 0;
             this.S = 0;
             Status = (int)Farbe.Weiss;
+            echoNeighbors = new List<Node>();
         }
 
         public Node(int id)
@@ -83,6 +87,7 @@ namespace Knoten
             this.R = 0;
             this.S = 0;
             Status = (int)Farbe.Weiss;
+            echoNeighbors = new List<Node>();
         }
 
 
@@ -414,6 +419,18 @@ namespace Knoten
             }
         }
 
+        public void initEchoNeighbors()
+        {
+            foreach (var n in neighBors)
+            {
+                if (n.GetType() == typeof(CustomerNode))
+                {
+                    echoNeighbors.Add(n);
+                }
+            }
+        }
+
+
         /*
          * reads a graphviz file and adds the right neighbours
          * Format:
@@ -534,6 +551,11 @@ namespace Knoten
             Console.WriteLine("id: " + id + ", ip:port: " + ip + ":" + port);
             Console.WriteLine("Nachbaranzahl: " + neighBors.Count);
             foreach (var n in neighBors)
+            {
+                Console.WriteLine(n.GetType());
+            }
+            Console.WriteLine("EChoNachbarn: " + echoNeighbors.Count);
+            foreach (var n in echoNeighbors)
             {
                 Console.WriteLine(n.GetType());
             }

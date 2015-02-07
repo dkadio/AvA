@@ -46,6 +46,7 @@ namespace Knoten
                  k.readNodes("test.txt");
                  k.nodeInit();
                  k.readGraph("graph1.gv");
+                 k.initEchoNeighbors();
                  k.getinformation();
                  k.Listen();
                  k.getProductAndNeihborInfo();

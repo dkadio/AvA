@@ -88,7 +88,8 @@ namespace Knoten
 
         private void echoBack(Message msg)
         {
-            if (echoCounter == neighBors.Count)
+            Console.WriteLine("Echo schwelle: " + echoCounter + "/" + echoNeighbors.Count);
+            if (echoCounter == echoNeighbors.Count)
             {
 
                 Console.WriteLine("---!!!Sende echo");
@@ -99,6 +100,7 @@ namespace Knoten
                 Status = (int)Farbe.Weiss;
                 echoCounter = 0;
                 max = 0;
+                initEchoNeighbors();
             }
         }
 
@@ -113,6 +115,8 @@ namespace Knoten
                     if (node.id == msg.senderId)
                     {
                         parent = node;
+                        if(parent.GetType()== typeof(BusinessNode))
+                        echoNeighbors.Add(parent);
                     }
                 }
                 Console.WriteLine("!!!my parent is: " + parent.id);
@@ -131,7 +135,7 @@ namespace Knoten
 
             msg.typ = Message.EXPLORER_MSG;
             msg.senderId = this.id;
-            foreach (var n in neighBors)
+            foreach (var n in echoNeighbors)
             {
                 if (n.id != parent.id)
                 {
@@ -149,7 +153,7 @@ namespace Knoten
                 //bereits gehört --> counter hochzählen
                 products[products.IndexOf(current)].kaufCounter++;
                 checkKaufentscheidungForBuy(products[products.IndexOf(current)], msg);
-                Console.WriteLine("Buy nachricht erhalten und kenne das produkt schon; kaufcounter(Produkt gekauft): " + products[products.IndexOf(current)].kaufCounter);
+                Console.WriteLine("Buy nachricht erhalten und kenne das produkt schon; gehört: " + products[products.IndexOf(current)].kaufCounter);
             }
             else
             {
@@ -167,8 +171,7 @@ namespace Knoten
             else
             {
                 Console.WriteLine("--Buy Counter erreicht oder Schwelle nicht erreicht: ");
-                Console.WriteLine("Buycounter: " + buyCounter);
-                Console.WriteLine("ProduktBuycounter(Produkt gekauft): " + produkt.buyCounter);
+                Console.WriteLine("Buycounter: " + produkt.buyCounter+ "/" + buyCounter );
                 Console.WriteLine("Kaufschwelle fuer Buynachrichten: " + kaufheard);
             }
         }
@@ -229,11 +232,12 @@ namespace Knoten
                 //bereits gehört --> counter hochzählen
                 products[products.IndexOf(current)].werbungCounter++;
                 checkKaufentscheidungForWerbung(products[products.IndexOf(current)], msg);
-                Console.WriteLine("Buy nachricht erhalten und kenne das produkt schon; kaufcounter: " + products[products.IndexOf(current)].werbungCounter);
+                Console.WriteLine("Kampagne nachricht erhalten und kenne das produkt schon; gehört: " + products[products.IndexOf(current)].werbungCounter);
 
             }
             else
             {
+                Console.WriteLine("Höre das erst mal von dem Produkt Trage es bei mir ein");
                 products.Add(current);
             }
         }
@@ -241,15 +245,15 @@ namespace Knoten
         private void checkKaufentscheidungForWerbung(Produkt produkt, Message msg)
         {
             //checke ob die schwelle für das produkt erreicht ist 
-            if (produkt.werbungCounter > werbungheard && buyCounter > produkt.werbungCounter)
+            //   wieviele kampagnen gehört  schwelle        wieviel dürfen gekauft werden > 
+            if (produkt.werbungCounter > werbungheard && buyCounter > produkt.buyCounter)
             {
                 BuyProduct(produkt, msg);
             }
             else
             {
                 Console.WriteLine("--Buy Counter ist abgelaufen oder Schwelle nicht erreicht: ");
-                Console.WriteLine("Buycounter: " + buyCounter);
-                Console.WriteLine("ProduktBuycounter(Produkt gekauft): " + produkt.buyCounter); ;
+                Console.WriteLine("Buycounter: " + produkt.buyCounter + "/" + buyCounter);
                 Console.WriteLine("Kaufschwelle fuer Werbung: " + werbungheard);
             }
         }
@@ -270,6 +274,10 @@ namespace Knoten
             foreach (var n in neighBors)
             {
                 Console.WriteLine(n.id + " " + n.GetType());
+            } Console.WriteLine("EChoNachbarn: " + echoNeighbors.Count);
+            foreach (var n in echoNeighbors)
+            {
+                Console.WriteLine(n.GetType());
             }
             Console.WriteLine("*************!info******************");
         }
